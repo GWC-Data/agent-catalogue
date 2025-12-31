@@ -29,18 +29,20 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-export type Customer = {
-  customer_id: string;
+export type Product = {
+  product_id: string;
   orders: number;
   returns: number;
+  return_rate: number;
+  risk_type: string;
   reasons: string[];
 }
 
-export const columns: ColumnDef<Customer>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
-    accessorKey: "customer_id",
-    header: () => <div className="">Customer ID</div>,
-    cell: ({ row }) => <div className="font-medium">{row.getValue("customer_id")}</div>,
+    accessorKey: "product_id",
+    header: () => <div className="">Product ID</div>,
+    cell: ({ row }) => <div className="font-medium">{row.getValue("product_id")}</div>,
   },
   {
     accessorKey: "orders",
@@ -54,6 +56,22 @@ export const columns: ColumnDef<Customer>[] = [
     header: () => <div className="">Returns</div>,
     cell: ({ row }) => {
       return <div className="font-medium">{row.getValue("returns")}</div>
+    },
+  },
+  {
+    accessorKey: "return_rate",
+    header: () => <div className="">Return Rate</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium">
+        {(row.getValue("return_rate") * 100).toFixed(2)}%
+      </div>
+    },
+  },
+  {
+    accessorKey: "risk_type",
+    header: () => <div className="">Risk Type</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium">{row.getValue("risk_type")}</div>
     },
   },
   {
@@ -81,7 +99,7 @@ export const columns: ColumnDef<Customer>[] = [
   },
 ]
 
-export function CustomerTable({ data }: { data: Customer[] }) {
+export function ProductTableOutput({ data }: { data: Product[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -112,7 +130,7 @@ export function CustomerTable({ data }: { data: Customer[] }) {
   return (
     <div className="w-full bg-white rounded-md px-6 py-3 shadow-sm border border-gray-200">
       <div className="flex items-center py-4">
-        <div className="text-lg font-bold">Customer Table</div>
+        <div className="text-lg font-bold">Product Table</div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

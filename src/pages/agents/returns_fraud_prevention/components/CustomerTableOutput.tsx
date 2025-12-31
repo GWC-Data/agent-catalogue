@@ -33,6 +33,8 @@ export type Customer = {
   customer_id: string;
   orders: number;
   returns: number;
+  return_rate: number;
+  risk_type: string;
   reasons: string[];
 }
 
@@ -57,31 +59,46 @@ export const columns: ColumnDef<Customer>[] = [
     },
   },
   {
+    accessorKey: "return_rate",
+    header: () => <div className="">Return Rate</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium">
+        {(row.getValue("return_rate") * 100).toFixed(2)}%
+      </div>
+    },
+  },
+  {
+    accessorKey: "risk_type",
+    header: () => <div className="">Risk Type</div>,
+    cell: ({ row }) => {
+      return <div className="font-medium">{row.getValue("risk_type")}</div>
+    },
+  },
+  {
     accessorKey: "reasons",
     header: () => <div className="">Reasons</div>,
     cell: ({ row }) => {
-    const reasons = row.getValue("reasons") as string[];
+      const reasons = row.getValue("reasons") as string[];
 
-    return (
-      <div className="flex flex-wrap gap-2">
-        {reasons?.map((reason, index) => (
-          <button
-            key={index}
-            className="px-3 py-1 text-xs font-medium rounded-full 
-                       bg-gray-100 text-gray-700 border border-gray-300
-                       hover:bg-gray-200"
-          >
-            {reason}
-          </button>
-        ))}
-      </div>
-    );
-  },
-
+      return (
+        <div className="flex flex-wrap gap-2">
+          {reasons?.map((reason, index) => (
+            <button
+              key={index}
+              className="px-3 py-1 text-xs font-medium rounded-full 
+                        bg-gray-100 text-gray-700 border border-gray-300
+                        hover:bg-gray-200"
+            >
+              {reason}
+            </button>
+          ))}
+        </div>
+      );
+    },
   },
 ]
 
-export function CustomerTable({ data }: { data: Customer[] }) {
+export function CustomerTableOutput({ data }: { data: Customer[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

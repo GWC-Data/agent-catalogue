@@ -110,7 +110,7 @@ export function ProductTable({ data }: { data: Product[] }) {
   })
 
   return (
-    <div className="w-full bg-white rounded-md p-6 shadow-sm my-5">
+    <div className="w-full bg-white rounded-md px-6 py-3 shadow-sm border border-gray-200">
       <div className="flex items-center py-4">
         <div className="text-lg font-bold">Product Table</div>
         <DropdownMenu>
