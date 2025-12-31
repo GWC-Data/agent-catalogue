@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import * as React from "react"
 import {
   flexRender,
@@ -63,7 +64,7 @@ export const columns: ColumnDef<Product>[] = [
     header: () => <div className="">Return Rate</div>,
     cell: ({ row }) => {
       return <div className="font-medium">
-        {(row.getValue("return_rate") * 100).toFixed(2)}%
+        {((row.getValue("return_rate") as number) * 100).toFixed(2)}%
       </div>
     },
   },
