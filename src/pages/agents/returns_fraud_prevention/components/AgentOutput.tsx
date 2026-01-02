@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CustomerTableOutput } from './CustomerTableOutput';
 import { ProductTableOutput } from './ProductTableOutput';
+import { Loader2 } from 'lucide-react';
 
 const AgentOutput = () => {
     const [loading, setLoading] = useState<boolean>(true);
@@ -27,9 +28,11 @@ const AgentOutput = () => {
         })
         .then((response) => response.json())
         .then((data) => {
-            setCustomers(data?.high_risk_customers);
-            setProducts(data?.high_risk_products);
-            setLoading(false);
+            setTimeout(() => {
+              setCustomers(data?.high_risk_customers);
+              setProducts(data?.high_risk_products);
+              setLoading(false);
+            }, 2000);
         })
         .catch((error) => {
             console.error("Error fetching output data:", error);
@@ -49,8 +52,9 @@ const AgentOutput = () => {
           </DialogHeader>
           <div>
             {loading ? (
-              <div className="flex items-center justify-center">
-                <div className="loader"></div>
+              <div className="flex items-center justify-center h-96 w-full flex-col">
+               <Loader2 className="mb-2 h-5 w-5 animate-spin" />
+               <span className="text-sm">🤖 Agent is Loading...</span>
               </div>
             ) : (
               <div className='container mx-auto mt-5'>
