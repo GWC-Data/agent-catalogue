@@ -1,0 +1,77 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Loader2 } from 'lucide-react';
+import { TopTenOutput } from './TopTenOutput';
+import { BottomTenOutput } from './BottomTenOutput copy';
+
+const AgentOutput = () => {
+    const [loading, setLoading] = useState<boolean>(true);
+    const [topTen, setTopTen] = useState<any>(null);
+    const [bottomTen, setBottomTen] = useState<any>(null);
+    const handleOutput = () => {
+        setLoading(true);
+        fetch("https://campaign-performance-agent-462434048008.asia-south2.run.app/analyze-roas")
+        .then((response) => response.json())
+        .then((data) => {
+            setTimeout(() => {
+              setTopTen(data?.top_10);
+              setBottomTen(data?.bottom_10);
+              setLoading(false);
+            }, 2000);
+        })
+        .catch((error) => {
+            console.error("Error fetching output data:", error);
+            setLoading(false);
+        });
+    }
+  return (
+    <div>
+      <Dialog>
+        <DialogTrigger>
+          <Button onClick={handleOutput}>Agent</Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Results</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div>
+            {loading ? (
+              <div className="flex items-center justify-center h-96 w-full flex-col">
+               <Loader2 className="mb-2 h-5 w-5 animate-spin" />
+               <span className="text-sm">🤖 Agent is Loading...</span>
+              </div>
+            ) : (
+              <div className='container mx-auto mt-5'>
+                <Tabs defaultValue="top_10" className="w-full ">
+                  <TabsList className='w-full'>
+                    <TabsTrigger value="top_10" className='w-full bg-white'>Top 10</TabsTrigger>
+                    <TabsTrigger value="bottom_10" className='w-full bg-white'>Bottom 10</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="top_10" className='pb-10'>
+                    <TopTenOutput data={topTen} />
+                  </TabsContent>
+                  <TabsContent value="bottom_10" className='pb-10'>
+                    <BottomTenOutput data={bottomTen} />
+                  </TabsContent>
+                </Tabs>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+export default AgentOutput;

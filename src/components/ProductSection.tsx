@@ -1,6 +1,8 @@
 import { useState } from "react";
 import sofaImage from "@/assets/ai-agent.png";
 import returns_fraud_prevention from "@/assets/returns_fraud_prevention.png";
+import campaign_performance from "@/assets/campaign_performance.jpg";
+
 import { Link } from "react-router-dom";
 
 const ProductSection = () => {
@@ -8,6 +10,7 @@ const ProductSection = () => {
 
   const products = [
     { image: returns_fraud_prevention, category: "", name: "Returns Fraud Prevention", path: "/returns_fraud_prevention" },
+    { image: campaign_performance, category: "", name: "Campaign Performance", path: "/campaign_performance" },
   ];
 
   const filteredProducts = products.filter(product => 
