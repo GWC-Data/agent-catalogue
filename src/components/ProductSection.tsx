@@ -11,6 +11,7 @@ const ProductSection = () => {
   const products = [
     { image: returns_fraud_prevention, category: "", name: "Returns Fraud Prevention", path: "/returns_fraud_prevention" },
     { image: campaign_performance, category: "", name: "Campaign Performance", path: "/campaign_performance" },
+    { image: campaign_performance, category: "", name: "Retail Optimization", path: "/retail_optimization" },
   ];
 
   const filteredProducts = products.filter(product => 

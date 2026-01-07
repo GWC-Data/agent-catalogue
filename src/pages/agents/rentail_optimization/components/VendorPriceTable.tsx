@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import * as React from "react"
 import {
   flexRender,
@@ -13,6 +12,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -28,61 +28,78 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { VendorPriceRow } from "../utils/formatVendorPricing"
 
-export type Product = {
-  product_id: string;
-  orders: number;
-  returns: number;
-  reasons: string[];
-}
+export const columns: ColumnDef<VendorPriceRow>[] = [
 
-export const columns: ColumnDef<Product>[] = [
-  {
-    accessorKey: "product_id",
-    header: () => <div className="">Product ID</div>,
-    cell: ({ row }) => <div className="font-medium">{row.getValue("product_id")}</div>,
-  },
-  {
-    accessorKey: "orders",
-    header: () => <div className="">Orders</div>,
-    cell: ({ row }) => {
-      return <div className="font-medium">{row.getValue("orders")}</div>
+    {
+        accessorKey: "product_id",
+        header: () => <div>Product ID</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("product_id")}
+          </div>
+        ),
     },
-  },
-  {
-    accessorKey: "returns",
-    header: () => <div className="">Returns</div>,
-    cell: ({ row }) => {
-      return <div className="font-medium">{row.getValue("returns")}</div>
+    {
+        accessorKey: "vendor_id",
+        header: () => <div>Vendor Id</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("vendor_id")}
+          </div>
+        ),
     },
-  },
-  {
-    accessorKey: "reasons",
-    header: () => <div className="">Reasons</div>,
-    cell: ({ row }) => {
-    const reasons = row.getValue("reasons") as string[];
+    {
+        accessorKey: "vendor_name",
+        header: () => <div>Vendor Name</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("vendor_name")}
+          </div>
+        ),
+    },
+    {
+        accessorKey: "email",
+        header: () => <div>Email</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("email")}
+          </div>
+        ),
+    },
+    {
+        accessorKey: "reliability_score",
+        header: () => <div>Reliability Score</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("reliability_score")}
+          </div>
+        ),
+    },
+    {
+        accessorKey: "delivery_days",
+        header: () => <div>Delivery Days</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("delivery_days")}
+          </div>
+        ),
+    },
+    {
+        accessorKey: "base_price",
+        header: () => <div>Base Price</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("base_price")}
+          </div>
+        ),
+    },
+     
+    ];
 
-    return (
-      <div className="flex flex-wrap gap-2">
-        {reasons?.map((reason, index) => (
-          <button
-            key={index}
-            className="px-3 py-1 text-xs font-medium rounded-full 
-                       bg-gray-100 text-gray-700 border border-gray-300
-                       hover:bg-gray-200"
-          >
-            {reason}
-          </button>
-        ))}
-      </div>
-    );
-  },
-
-  },
-]
-
-export function ProductTable({ data }: { data: Product[] }) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+export const VendorPriceTable = ({ data }: { data: VendorPriceRow[] }) => {
+const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
@@ -217,3 +234,4 @@ export function ProductTable({ data }: { data: Product[] }) {
     </div>
   )
 }
+

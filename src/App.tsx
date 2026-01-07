@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import ReturnsFraudPrevention from "./pages/agents/returns_fraud_prevention";
 import "./App.css";
 import CampaignPerformance from "./pages/agents/campaign_performance";
+import RetailOptimization from "./pages/agents/rentail_optimization"
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/returns_fraud_prevention" element={<ReturnsFraudPrevention />} />
           <Route path="/campaign_performance" element={<CampaignPerformance />} />
+          <Route path="/retail_optimization" element={<RetailOptimization />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
