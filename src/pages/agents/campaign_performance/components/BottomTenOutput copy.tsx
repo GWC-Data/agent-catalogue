@@ -92,8 +92,6 @@ export function BottomTenOutput({ data }: { data: BottomTen[] }) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
-
-  
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
