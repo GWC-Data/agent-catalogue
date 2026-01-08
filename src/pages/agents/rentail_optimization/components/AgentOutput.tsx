@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -165,6 +164,8 @@ const commentsRef = React.useRef<HTMLInputElement>(null);
       setResult(false)
       setAvailableBudget("")
       setAvailableBudget("1")
+      setShowAgent(false)
+      setShowWorkflowApprove(false)
     }
   }}
 >
@@ -176,7 +177,7 @@ const commentsRef = React.useRef<HTMLInputElement>(null);
   <DialogContent className="sm:max-w-[450px] bg-white">
 
     {/* REQUIRED for accessibility */}
-    {!result &&
+    {!result && !showWorkflowApprove &&
     <DialogHeader>
       <DialogTitle>Agent Execution</DialogTitle>
     </DialogHeader>
@@ -189,13 +190,14 @@ const commentsRef = React.useRef<HTMLInputElement>(null);
       <DialogTitle>Approval Details</DialogTitle>
     </DialogHeader>
 
-    <div className="grid gap-4 py-2">
+    <div className="grid gap-4 py-5">
       <div className="grid gap-1.5">
       <Label htmlFor="approver">Approver</Label>
     <Input
       id="approver"
       ref={approverRef}
       placeholder="Enter approver name"
+      className='bg-white'
     />
   </div>
 
@@ -205,6 +207,7 @@ const commentsRef = React.useRef<HTMLInputElement>(null);
       id="comments"
       ref={commentsRef}
       placeholder="Enter comments"
+      className='bg-white'
     />
       </div>
     </div>

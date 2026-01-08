@@ -77,7 +77,7 @@ const ProductSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 min-h-[400px]">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product, index) => (
-                <Link to={product.path} key={index} className="group bg-white rounded-xl p-4 hover:shadow-xl transition-all duration-300 border border hover:border-border animate-in fade-in zoom-in duration-500">
+                <Link to={product.path} key={index} className="group bg-white rounded-xl p-4 hover:shadow-xl transition-all duration-300 border hover:border-border animate-in fade-in zoom-in duration-500">
                   {/* Product image */}
                   <div className="w-full aspect-square bg-gradient-to-br from-poster-gray/30 to-card rounded-lg overflow-hidden mb-6 relative">
                     <img 
