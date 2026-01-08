@@ -9,17 +9,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
+import { ProductTableOutput } from './ProductTableOutput';
 
 const AgentOutput = () => {
 
+  const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [availableBudget, setAvailableBudget] = useState<string>("");
     const [showBudget, setShowBudget] = useState<boolean>(true)
+    const [showAgent, setShowAgent] = useState<boolean>(false)
+    const [showApproval, setShowApproval] = useState<boolean>(false)
+    const [result, setResult] = useState<boolean>(false);
+    const [message, setMessage] = useState("");
     const [approvalData, setApprovalData] = React.useState<any>(null);
+    const [agentOutput, setAgentOutput] = React.useState<any>(null);
+    const [workFlowId, setWorkFlowId] = useState<number>(() => {
+      const stored = localStorage.getItem("workFlowId");
+      return stored ? Number(stored) : 0;
+    });
+  
 
     // Generates random 5-letter lowercase string
     const generateExecutor = (): string => {
@@ -50,13 +63,21 @@ const AgentOutput = () => {
             thread_id: generateThreadId()
           }),
         })
-        .then((response) => response.json())
-        .then((data) => {
+          .then((response) => response.json())
+          .then((data) => {
+            const rawWorkflowId = data.__interrupt__?.[0]?.value?.["Workflow ID"];
+            const parsedWorkflowId = Number(rawWorkflowId);
+
+        if (!Number.isNaN(parsedWorkflowId)) {
+          setWorkFlowId(parsedWorkflowId);
+          localStorage.setItem("workFlowId", String(parsedWorkflowId));
+        }
           setApprovalData(data.__interrupt__[0].value);
             setTimeout(() => {
               setLoading(false);
             }, 2000);
             console.log(data)
+            setShowApproval(true)
         })
         .catch((error) => {
             console.error("Error fetching output data:", error);
@@ -64,21 +85,119 @@ const AgentOutput = () => {
         });
     }
 
+    const handleAgentOutput = () => {
+      setShowBudget(false)
+      setLoading(true);
+      fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
+      .then((response) => response.json())
+      .then((data) => {        
+            setAgentOutput(data?.current_state?.demand_forecast);
+            console.log(data?.current_state?.demand_forecast)
+            setShowApproval(false)
+            setShowAgent(true)
+            setLoading(false);
+      })
+      .catch((error) => {
+          console.error("Error fetching output data:", error);
+          setLoading(false);
+      });
+  }
+
+  const handleApprove = async () => {
+    setLoading(true);
+      fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}/approve`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            action: "reject",
+            approver: "string",
+            comments: "string"
+          }),
+        })
+      .then((response) => response.json())
+      .then((data) => {   
+        console.log(data)     
+
+        setMessage("Approved")
+        setShowAgent(false)
+            setLoading(false);
+            setResult(true);
+      })
+      .catch((error) => {
+          console.error("Error fetching output data:", error);
+          setLoading(false);
+      });
+  };
+
+  const handleReject = async () => {
+    // setShowAgent(false)
+    setLoading(true);
+      fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
+      .then((response) => response.json())
+      .then((data) => {  
+        console.log(data)   
+        setMessage("Rejected")
+        setResult(true);
+            setShowAgent(false)
+            setLoading(false);
+      })
+      .catch((error) => {
+          console.error("Error fetching output data:", error);
+          setLoading(false);
+      });
+  };
+
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
   <DialogTrigger>
     <Button>Agent</Button>
   </DialogTrigger>
 
-  <DialogContent className="sm:max-w-[600px]">
+  <DialogContent className="sm:max-w-[450px]">
 
     {/* REQUIRED for accessibility */}
+    {!result &&
     <DialogHeader>
       <DialogTitle>Agent Execution</DialogTitle>
-      <DialogDescription>
-        Budget input and approval workflow
-      </DialogDescription>
     </DialogHeader>
+    }
+    
+    {result && 
+    
+    <div className=" inline-flex flex-col items-center justify-center text-center py-2">
+    <DialogHeader>
+      <DialogTitle
+        className={
+          message.includes("Approved")
+            ? "text-green-600 text-2xl font-semibold"
+            : "text-red-600 text-2xl font-semibold"
+        }
+      >
+        {message}
+      </DialogTitle>
+    </DialogHeader>
+
+    {/* Workflow ID */}
+    <div className="mt-3">
+      <span className="px-2 py-1.5 rounded-md bg-gray-100 text-gray-700 text-sm font-medium">
+        Workflow ID: {workFlowId}
+      </span>
+    </div>
+
+    {/* Close button */}
+    <div className="mt-6">
+      <DialogClose asChild>
+        <Button variant="destructive" size="sm">
+          Close
+        </Button>
+      </DialogClose>
+    </div>
+  </div>
+    
+    }
 
     {/* STEP 1: Budget input */}
     {showBudget && (
@@ -97,7 +216,7 @@ const AgentOutput = () => {
           }}
         />
 
-        <DialogFooter>
+        <DialogFooter className='mt-3'>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
@@ -117,11 +236,11 @@ const AgentOutput = () => {
     )}
 
     {/* STEP 3: Approval response */}
-    {!showBudget && !loading && approvalData && (
+    {showApproval &&!showAgent && !showBudget && !loading && approvalData && (
       <div className="mt-4 space-y-3">
 
     <div className="rounded-md border bg-blue-50 px-3 py-2 text-sm text-blue-800">
-      <strong>Workflow ID:</strong> {approvalData["Workflow ID"]}
+      <strong>Workflow ID:</strong> <span className="font-medium">{workFlowId}</span>
     </div>
 
         <div className="text-sm font-medium text-gray-700">
@@ -133,18 +252,28 @@ const AgentOutput = () => {
         </div>
 
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Close</Button>
-          </DialogClose>
-
-          <Button className="bg-green-600 text-white">
-            Approve
-          </Button>
-
-          <Button variant="destructive">
-            Reject
-          </Button>
+            <Button onClick={handleAgentOutput}>Close</Button>
         </DialogFooter>
+      </div>
+    )}
+    {showAgent && !loading && agentOutput && (
+      <div>
+     <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto" 
+     onWheel={(e) => e.stopPropagation()}>
+      <DialogTitle>Results</DialogTitle>
+      <Tabs defaultValue="product" className="w-full">
+        <TabsList className='w-full'>
+          <TabsTrigger value="product" className='w-full bg-white'>Product</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="product" className='pb-10'>
+          <ProductTableOutput data={agentOutput} 
+          onApprove={handleApprove}
+          onReject={handleReject}
+          loading={loading} />
+        </TabsContent>
+      </Tabs>
+      </DialogContent>  
       </div>
     )}
 
