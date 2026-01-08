@@ -160,6 +160,7 @@ const AgentOutput = () => {
       setShowBudget(true)
       setResult(false)
       setAvailableBudget("")
+      setAvailableBudget("1")
     }
   }}
 >
@@ -211,7 +212,7 @@ const AgentOutput = () => {
     }
 
     {/* STEP 1: Budget input */}
-    {showBudget && (
+    {showBudget && !result && (
       <div className="grid gap-3">
         <Label htmlFor="budget">Enter The Budget</Label>
 
