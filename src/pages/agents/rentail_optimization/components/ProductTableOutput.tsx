@@ -43,9 +43,8 @@ export type Product = {
 
 type ProductTableOutputProps = {
     data: Product[];
-    onApprove: () => void;
+    onShowApprove: () => void;
     onReject: () => void;
-    loading?: boolean;
   };
 
 export const columns: ColumnDef<Product>[] = [
@@ -99,11 +98,12 @@ export const columns: ColumnDef<Product>[] = [
   
 ]
 
+
+
 export function ProductTableOutput({
     data,
-    onApprove,
-    onReject,
-    loading = false,
+    onShowApprove,
+    onReject
   }: ProductTableOutputProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -141,9 +141,8 @@ export function ProductTableOutput({
   </div>
 
   <div className="flex gap-5">
-    <Button onClick={onApprove} disabled={loading}>Approve</Button>
-    <Button variant="destructive" onClick={onReject}
-        disabled={loading}>Reject</Button>
+    <Button onClick={onShowApprove}>Approve</Button>
+    <Button variant="destructive" onClick={onReject}>Reject</Button>
 
   <DropdownMenu>
     <DropdownMenuTrigger asChild>

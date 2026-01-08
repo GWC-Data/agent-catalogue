@@ -23,11 +23,14 @@ const AgentOutput = () => {
     const [availableBudget, setAvailableBudget] = useState<string>("1");
     const [showBudget, setShowBudget] = useState<boolean>(true)
     const [showAgent, setShowAgent] = useState<boolean>(false)
-    const [showApproval, setShowApproval] = useState<boolean>(false)
+    const [showApproval, setShowApproval] = useState<boolean>(false);
+    const [showWorkflowApprove, setShowWorkflowApprove] = useState<boolean>(false);
     const [result, setResult] = useState<boolean>(false);
     const [message, setMessage] = useState("");
     const [approvalData, setApprovalData] = React.useState<any>(null);
     const [agentOutput, setAgentOutput] = React.useState<any>(null);
+    const approverRef = React.useRef<HTMLInputElement>(null);
+const commentsRef = React.useRef<HTMLInputElement>(null);
     const [workFlowId, setWorkFlowId] = useState<number>(() => {
     const stored = localStorage.getItem("workFlowId");
       return stored ? Number(stored) : 0;
@@ -103,8 +106,9 @@ const AgentOutput = () => {
       });
   }
 
-  const handleApprove = async () => {
+  const handleApprove = async (approver: string, comments: string) => {
     setLoading(true);
+    setShowWorkflowApprove(false)
     setShowAgent(false)
     setResult(true);
       fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}/approve`, {
@@ -113,9 +117,9 @@ const AgentOutput = () => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            action: "reject",
-            approver: "string",
-            comments: "string"
+            action: "approve",
+            approver: approver,
+            comments: comments
           }),
         })
       .then((response) => response.json())
@@ -140,7 +144,6 @@ const AgentOutput = () => {
       .then((data) => {  
         console.log(data)   
         setMessage("Rejected")
-           
             setLoading(false);
       })
       .catch((error) => {
@@ -148,6 +151,7 @@ const AgentOutput = () => {
           setLoading(false);
       });
   };
+
 
 
   return (
@@ -177,6 +181,55 @@ const AgentOutput = () => {
       <DialogTitle>Agent Execution</DialogTitle>
     </DialogHeader>
     }
+
+    {/* Workflow Approve pop-up */}
+    {showWorkflowApprove && (
+  <div>
+    <DialogHeader>
+      <DialogTitle>Approval Details</DialogTitle>
+    </DialogHeader>
+
+    <div className="grid gap-4 py-2">
+      <div className="grid gap-1.5">
+      <Label htmlFor="approver">Approver</Label>
+    <Input
+      id="approver"
+      ref={approverRef}
+      placeholder="Enter approver name"
+    />
+  </div>
+
+  <div className="grid gap-1.5">
+    <Label htmlFor="comments">Comments</Label>
+    <Input
+      id="comments"
+      ref={commentsRef}
+      placeholder="Enter comments"
+    />
+      </div>
+    </div>
+
+    <DialogFooter className="flex justify-end gap-3">
+      <Button
+        variant="outline"
+        onClick={() => setShowWorkflowApprove(false)}
+      >
+        Cancel
+      </Button>
+
+      <Button
+        onClick={() => {
+        const approver = approverRef.current?.value || "";
+        const comments = commentsRef.current?.value || "";
+
+        handleApprove(approver, comments); // ✅ pass directly
+      }}
+>
+        Submit
+      </Button>
+    </DialogFooter>
+  </div>
+)}
     
     {/* Approv and Reject Pop-up*/}
     {result && 
@@ -249,7 +302,7 @@ const AgentOutput = () => {
     )}
 
     {/* STEP 3: Approval response */}
-    {showApproval &&!showAgent && !showBudget && !loading && approvalData && (
+    {showApproval &&!showAgent && !showBudget && !loading && !showWorkflowApprove && approvalData && (
       <div className="space-y-3">
 
     <div className=" py-2 text-sm text-blue-800">
@@ -271,7 +324,7 @@ const AgentOutput = () => {
     )}
 
     {/* STEP 4: Final Agent Response */}
-    {showAgent && !loading && agentOutput && (
+    {showAgent && !loading && !showWorkflowApprove && agentOutput && (
       <div>
      <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto" 
      onWheel={(e) => e.stopPropagation()}>
@@ -283,9 +336,8 @@ const AgentOutput = () => {
 
         <TabsContent value="product" className='pb-10'>
           <ProductTableOutput data={agentOutput} 
-          onApprove={handleApprove}
-          onReject={handleReject}
-          loading={loading} />
+          onShowApprove={() => setShowWorkflowApprove(true)}
+          onReject={handleReject}/>
         </TabsContent>
       </Tabs>
       </DialogContent>  
