@@ -18,9 +18,9 @@ import { ProductTableOutput } from './ProductTableOutput';
 
 const AgentOutput = () => {
 
-  const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [availableBudget, setAvailableBudget] = useState<string>("");
+    const [availableBudget, setAvailableBudget] = useState<string>("1");
     const [showBudget, setShowBudget] = useState<boolean>(true)
     const [showAgent, setShowAgent] = useState<boolean>(false)
     const [showApproval, setShowApproval] = useState<boolean>(false)
@@ -29,7 +29,7 @@ const AgentOutput = () => {
     const [approvalData, setApprovalData] = React.useState<any>(null);
     const [agentOutput, setAgentOutput] = React.useState<any>(null);
     const [workFlowId, setWorkFlowId] = useState<number>(() => {
-      const stored = localStorage.getItem("workFlowId");
+    const stored = localStorage.getItem("workFlowId");
       return stored ? Number(stored) : 0;
     });
   
@@ -49,6 +49,7 @@ const AgentOutput = () => {
       return Math.floor(1000 + Math.random() * 9000).toString();
   };
 
+  //Fetching POST method for Approval 
     const handleOutput = () => {
         setLoading(true);
         setShowBudget(false)
@@ -86,14 +87,13 @@ const AgentOutput = () => {
     }
 
     const handleAgentOutput = () => {
-      setShowBudget(false)
       setLoading(true);
+      setShowApproval(false)
       fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
       .then((response) => response.json())
       .then((data) => {        
             setAgentOutput(data?.current_state?.demand_forecast);
             console.log(data?.current_state?.demand_forecast)
-            setShowApproval(false)
             setShowAgent(true)
             setLoading(false);
       })
@@ -105,6 +105,8 @@ const AgentOutput = () => {
 
   const handleApprove = async () => {
     setLoading(true);
+    setShowAgent(false)
+    setResult(true);
       fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}/approve`, {
         method: "POST",
         headers: {
@@ -119,11 +121,9 @@ const AgentOutput = () => {
       .then((response) => response.json())
       .then((data) => {   
         console.log(data)     
-
         setMessage("Approved")
-        setShowAgent(false)
+            
             setLoading(false);
-            setResult(true);
       })
       .catch((error) => {
           console.error("Error fetching output data:", error);
@@ -132,15 +132,15 @@ const AgentOutput = () => {
   };
 
   const handleReject = async () => {
-    // setShowAgent(false)
     setLoading(true);
+    setShowAgent(false)
+    setResult(true);
       fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
       .then((response) => response.json())
       .then((data) => {  
         console.log(data)   
         setMessage("Rejected")
-        setResult(true);
-            setShowAgent(false)
+           
             setLoading(false);
       })
       .catch((error) => {
@@ -151,12 +151,24 @@ const AgentOutput = () => {
 
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+  open={open}
+  onOpenChange={(isOpen) => {
+    setOpen(isOpen);
+
+    if (!isOpen) {
+      setShowBudget(true)
+      setResult(false)
+      setAvailableBudget("")
+    }
+  }}
+>
+  {/* Agent Button */}
   <DialogTrigger>
     <Button>Agent</Button>
   </DialogTrigger>
 
-  <DialogContent className="sm:max-w-[450px]">
+  <DialogContent className="sm:max-w-[450px] bg-white">
 
     {/* REQUIRED for accessibility */}
     {!result &&
@@ -165,9 +177,9 @@ const AgentOutput = () => {
     </DialogHeader>
     }
     
+    {/* Approv and Reject Pop-up*/}
     {result && 
-    
-    <div className=" inline-flex flex-col items-center justify-center text-center py-2">
+    <div className=" py-2">
     <DialogHeader>
       <DialogTitle
         className={
@@ -182,13 +194,13 @@ const AgentOutput = () => {
 
     {/* Workflow ID */}
     <div className="mt-3">
-      <span className="px-2 py-1.5 rounded-md bg-gray-100 text-gray-700 text-sm font-medium">
+      <span className="py-1.5 rounded-md font-semibold text-gray-700 text-sm ">
         Workflow ID: {workFlowId}
       </span>
     </div>
 
     {/* Close button */}
-    <div className="mt-6">
+    <div className="flex justify-end mt-6">
       <DialogClose asChild>
         <Button variant="destructive" size="sm">
           Close
@@ -196,7 +208,6 @@ const AgentOutput = () => {
       </DialogClose>
     </div>
   </div>
-    
     }
 
     {/* STEP 1: Budget input */}
@@ -208,11 +219,12 @@ const AgentOutput = () => {
           id="budget"
           name="budget-1"
           value={availableBudget}
+          className='bg-white'
           onChange={(e) => {
             const value = e.target.value;
-            if (/^\d*$/.test(value)) {
-              setAvailableBudget(value);
-            }
+              if (/^\d*$/.test(value)) {
+                setAvailableBudget(value)
+              }
           }}
         />
 
@@ -237,9 +249,9 @@ const AgentOutput = () => {
 
     {/* STEP 3: Approval response */}
     {showApproval &&!showAgent && !showBudget && !loading && approvalData && (
-      <div className="mt-4 space-y-3">
+      <div className="space-y-3">
 
-    <div className="rounded-md border bg-blue-50 px-3 py-2 text-sm text-blue-800">
+    <div className=" py-2 text-sm text-blue-800">
       <strong>Workflow ID:</strong> <span className="font-medium">{workFlowId}</span>
     </div>
 
@@ -247,7 +259,7 @@ const AgentOutput = () => {
           {approvalData.message}
         </div>
 
-        <div className="max-h-[300px] overflow-y-auto whitespace-pre-wrap rounded-md border bg-gray-50 p-4 text-sm">
+        <div className="max-h-[300px] overflow-y-auto whitespace-pre-wrap rounded-md border border-blue-200 p-4 text-sm">
           {approvalData.approval_request}
         </div>
 
@@ -256,6 +268,8 @@ const AgentOutput = () => {
         </DialogFooter>
       </div>
     )}
+
+    {/* STEP 4: Final Agent Response */}
     {showAgent && !loading && agentOutput && (
       <div>
      <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto" 
