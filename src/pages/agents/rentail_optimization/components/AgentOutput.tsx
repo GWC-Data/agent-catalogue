@@ -59,7 +59,7 @@ const AgentOutput = () => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            available_budget: Number(availableBudget) || 0,
+            available_budget: Number(availableBudget) || 1,
             executor: generateExecutor(),
             thread_id: generateThreadId()
           }),
