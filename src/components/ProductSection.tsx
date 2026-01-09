@@ -2,6 +2,8 @@ import { useState } from "react";
 import sofaImage from "@/assets/ai-agent.png";
 import returns_fraud_prevention from "@/assets/returns_fraud_prevention.png";
 import campaign_performance from "@/assets/campaign_performance.jpg";
+import retail_optimization from "@/assets/retail_optimization.png"
+import crm_engagement_optimization from "@/assets/crm_engagement_optimization.png"
 
 import { Link } from "react-router-dom";
 
@@ -11,6 +13,8 @@ const ProductSection = () => {
   const products = [
     { image: returns_fraud_prevention, category: "", name: "Returns Fraud Prevention", path: "/returns_fraud_prevention" },
     { image: campaign_performance, category: "", name: "Campaign Performance", path: "/campaign_performance" },
+    { image: retail_optimization, category: "", name: "Retail Optimization", path: "/retail_optimization" },
+    { image: crm_engagement_optimization, category: "", name: "CRM Engagement Optimization", path: "/crm_engagament_optimization" },
   ];
 
   const filteredProducts = products.filter(product => 
@@ -75,7 +79,7 @@ const ProductSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 min-h-[400px]">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product, index) => (
-                <Link to={product.path} key={index} className="group bg-white rounded-xl p-4 hover:shadow-xl transition-all duration-300 border border hover:border-border animate-in fade-in zoom-in duration-500">
+                <Link to={product.path} key={index} className="group bg-white rounded-xl p-4 hover:shadow-xl transition-all duration-300 border hover:border-border animate-in fade-in zoom-in duration-500">
                   {/* Product image */}
                   <div className="w-full aspect-square bg-gradient-to-br from-poster-gray/30 to-card rounded-lg overflow-hidden mb-6 relative">
                     <img 
