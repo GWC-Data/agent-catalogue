@@ -79,7 +79,6 @@ const AgentOutput = () => {
             setTimeout(() => {
               setLoading(false);
             }, 2000);
-            console.log(data)
             setShowApproval(true)
         })
         .catch((error) => {
@@ -95,7 +94,6 @@ const AgentOutput = () => {
       .then((response) => response.json())
       .then((data) => {        
             setAgentOutput(data?.current_state?.demand_forecast);
-            console.log(data?.current_state?.demand_forecast)
             setShowAgent(true)
             setLoading(false);
       })
@@ -122,8 +120,7 @@ const AgentOutput = () => {
           }),
         })
       .then((response) => response.json())
-      .then((data) => {   
-        console.log(data)     
+      .then((data) => {     
         setMessage("Approved") 
             setLoading(false);
       })
@@ -139,8 +136,7 @@ const AgentOutput = () => {
     setResult(true);
       fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
       .then((response) => response.json())
-      .then((data) => {  
-        console.log(data)   
+      .then((data) => {   
         setMessage("Rejected")
             setLoading(false);
       })

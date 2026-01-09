@@ -39,7 +39,6 @@ const AgentOutput = () => {
         })
         .then((response) => response.json())
         .then((data) => {
-            console.log(data?.structured_marketing_insights)
             setActionsMessage(data?.next_actions)
             setRecommendedChannel(data?.recommended_channel)
             setBestSendWindows(data?.best_send_windows)
