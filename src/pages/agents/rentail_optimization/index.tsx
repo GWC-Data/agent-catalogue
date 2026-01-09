@@ -26,7 +26,6 @@ const RetailOptimization = () => {
         .then(([productData, vendorData]) => {
           setProduct(productData);
           console.log(vendorData.vendor_pricing);
-          
           setVendorPrice(formatVendorPricing(vendorData.vendor_pricing));
           setLoading(false);
         })

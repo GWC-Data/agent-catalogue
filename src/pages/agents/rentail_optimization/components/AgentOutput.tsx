@@ -29,7 +29,7 @@ const AgentOutput = () => {
     const [approvalData, setApprovalData] = React.useState<any>(null);
     const [agentOutput, setAgentOutput] = React.useState<any>(null);
     const approverRef = React.useRef<HTMLInputElement>(null);
-const commentsRef = React.useRef<HTMLInputElement>(null);
+    const commentsRef = React.useRef<HTMLInputElement>(null);
     const [workFlowId, setWorkFlowId] = useState<number>(() => {
     const stored = localStorage.getItem("workFlowId");
       return stored ? Number(stored) : 0;
@@ -124,8 +124,7 @@ const commentsRef = React.useRef<HTMLInputElement>(null);
       .then((response) => response.json())
       .then((data) => {   
         console.log(data)     
-        setMessage("Approved")
-            
+        setMessage("Approved") 
             setLoading(false);
       })
       .catch((error) => {
@@ -150,9 +149,6 @@ const commentsRef = React.useRef<HTMLInputElement>(null);
           setLoading(false);
       });
   };
-
-
-
   return (
     <Dialog
   open={open}

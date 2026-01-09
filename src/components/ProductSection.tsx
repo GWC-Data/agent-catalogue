@@ -3,6 +3,7 @@ import sofaImage from "@/assets/ai-agent.png";
 import returns_fraud_prevention from "@/assets/returns_fraud_prevention.png";
 import campaign_performance from "@/assets/campaign_performance.jpg";
 import retail_optimization from "@/assets/retail_optimization.png"
+import crm_engagement_optimization from "@/assets/crm_engagement_optimization.png"
 
 import { Link } from "react-router-dom";
 
@@ -13,6 +14,7 @@ const ProductSection = () => {
     { image: returns_fraud_prevention, category: "", name: "Returns Fraud Prevention", path: "/returns_fraud_prevention" },
     { image: campaign_performance, category: "", name: "Campaign Performance", path: "/campaign_performance" },
     { image: retail_optimization, category: "", name: "Retail Optimization", path: "/retail_optimization" },
+    { image: crm_engagement_optimization, category: "", name: "CRM Engagement Optimization", path: "/crm_engagament_optimization" },
   ];
 
   const filteredProducts = products.filter(product => 
