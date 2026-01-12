@@ -19,9 +19,11 @@ import { Button } from '@/components/ui/button';
 import BestSendWindowsOutput from './BestSendWindowsOutput';
 import StructuredMarketingInsightsOutput from './StructuredMarketingInsightsOutput';
 import AbTestWinnersOutput from './AbTestWinnersOutput';
+import { useToast } from "@/components/ui/use-toast"
 
 const AgentOutput = () => {
 
+  const { toast } = useToast()
     const [loading, setLoading] = useState<boolean>(true);
     const [actionsMessage, setActionsMessage] = useState<any>([])
     const [recommendedChannel, setRecommendedChannel] = useState<any>(null)
@@ -45,10 +47,20 @@ const AgentOutput = () => {
             setStructuredMarketingInsights(data?.structured_marketing_insights)
             setAbTestWinners(data?.ab_test_winners)
             setLoading(false);
+            toast({
+              title: "Success",
+              description:"Agent data fetched successfully",
+              className: "bg-green-600 text-white border-green-700",
+            })
         })
         .catch((error) => {
             console.error("Error fetching output data:", error);
             setLoading(false);
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Something went wrong",
+            })
         });
     }
   return (

@@ -13,8 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CustomerTableOutput } from './CustomerTableOutput';
 import { ProductTableOutput } from './ProductTableOutput';
 import { Loader2 } from 'lucide-react';
+import { useToast } from "@/components/ui/use-toast"
 
 const AgentOutput = () => {
+  const { toast } = useToast()
     const [loading, setLoading] = useState<boolean>(true);
     const [customers, setCustomers] = useState<any>(null);
     const [products, setProducts] = useState<any>(null);
@@ -32,11 +34,22 @@ const AgentOutput = () => {
               setCustomers(data?.high_risk_customers);
               setProducts(data?.high_risk_products);
               setLoading(false);
+              toast({
+                title: "Success",
+                description: "Agent output generated successfully.",
+                className: "bg-green-600 text-white border-green-700",
+              })
             }, 2000);
+            
         })
         .catch((error) => {
             console.error("Error fetching output data:", error);
             setLoading(false);
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Something went wrong",
+            })
         });
     }
   return (

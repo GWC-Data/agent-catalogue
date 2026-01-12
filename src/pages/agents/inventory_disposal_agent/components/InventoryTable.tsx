@@ -1,0 +1,285 @@
+/* eslint-disable react-refresh/only-export-components */
+import * as React from "react"
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
+} from "@tanstack/react-table"
+import { ChevronDown } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+export type Inventory = {
+    inventory_id: string
+    product_name: string
+    category: string
+    region: string
+    shelf_life_days: number
+    days_in_inventory: number
+    sales_velocity: number
+    markdown_eligible: boolean
+    demand_forecast: number
+    carrying_cost_per_unit: number
+    available_units: number
+  }
+
+export const columns: ColumnDef<Inventory>[] = [
+    {
+        accessorKey: "inventory_id",
+        header: () => <div>Inventory ID</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("inventory_id")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "product_name",
+        header: () => <div>Product Name</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("product_name")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "category",
+        header: () => <div>Category</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("category")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "region",
+        header: () => <div>Region</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("region")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "available_units",
+        header: () => <div>Available Units</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("available_units")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "days_in_inventory",
+        header: () => <div>Days in Inventory</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("days_in_inventory")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "shelf_life_days",
+        header: () => <div>Shelf Life (Days)</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {row.getValue("shelf_life_days")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "sales_velocity",
+        header: () => <div>Sales Velocity</div>,
+        cell: ({ row }) => {
+          const value = row.getValue("sales_velocity") as number
+          return <div className="font-medium">{value.toFixed(2)}</div>
+        },
+      },
+      {
+        accessorKey: "demand_forecast",
+        header: () => <div>Demand Forecast</div>,
+        cell: ({ row }) => {
+          const value = row.getValue("demand_forecast") as number
+          return <div className="font-medium">{value.toFixed(2)}</div>
+        },
+      },
+      {
+        accessorKey: "carrying_cost_per_unit",
+        header: () => <div>Carrying Cost / Unit</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">
+            ${row.getValue("carrying_cost_per_unit")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "markdown_eligible",
+        header: () => <div>Markdown Eligible</div>,
+        cell: ({ row }) => {
+          const value = row.getValue("markdown_eligible") as boolean
+          return (
+            <div className="font-medium">
+              {value ? "Yes" : "No"}
+            </div>
+          )
+        },
+      },
+
+]
+export const InventoryTable = ({ data }: { data: Inventory[] }) => {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+      []
+    )
+    const [columnVisibility, setColumnVisibility] =
+      React.useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] = React.useState({})
+  
+    const table = useReactTable({
+      data,
+      columns,
+      onSortingChange: setSorting,
+      onColumnFiltersChange: setColumnFilters,
+      getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      onColumnVisibilityChange: setColumnVisibility,
+      onRowSelectionChange: setRowSelection,
+      state: {
+        sorting,
+        columnFilters,
+        columnVisibility,
+        rowSelection,
+      },
+    })
+  
+    return (
+      <div className="w-full bg-white rounded-md px-6 py-3 shadow-sm border border-gray-200">
+        <div className="flex items-center py-4">
+          <div className="text-lg font-bold">Campaign Table</div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="overflow-hidden rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="bg-[#6f2b8b] text-white">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    )
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="text-muted-foreground flex-1 text-sm">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+}

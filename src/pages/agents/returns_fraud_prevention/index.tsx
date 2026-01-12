@@ -22,7 +22,6 @@ const ReturnsFraudPrevention = () => {
       .then((response) => response.json())
       .then((data) => {
         setCustomer(data?.customer_data?.customers)
-        console.log(data)
         setLoading(false);
       })
       .catch((error) => {
@@ -34,7 +33,6 @@ const ReturnsFraudPrevention = () => {
       .then((response) => response.json())
       .then((data) => { 
         setProduct(data?.product_data?.products)
-        console.log(data)
         setLoading(false);
     })
     .catch((error) => {

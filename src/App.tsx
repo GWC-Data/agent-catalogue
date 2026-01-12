@@ -11,6 +11,7 @@ import CampaignPerformance from "./pages/agents/campaign_performance";
 import RetailOptimization from "./pages/agents/rentail_optimization"
 import CrmEngagementOptimization from "./pages/agents/crm_engagement_optimization";
 import InfluencerFitmentAgent from "./pages/agents/influencer_fitment_agent";
+import InventoryDisposalAgent from "./pages/agents/inventory_disposal_agent";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/retail_optimization" element={<RetailOptimization />} />
           <Route path="/crm_engagament_optimization" element={<CrmEngagementOptimization />} />
           <Route path="/influencer_fitment_agent" element={<InfluencerFitmentAgent />} />
+          <Route path="/inventory_disposal_agent" element={<InventoryDisposalAgent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
