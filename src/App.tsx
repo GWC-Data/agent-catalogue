@@ -11,7 +11,7 @@ import CampaignPerformance from "./pages/agents/campaign_performance";
 import RetailOptimization from "./pages/agents/rentail_optimization"
 import CrmEngagementOptimization from "./pages/agents/crm_engagement_optimization";
 import InfluencerFitmentAgent from "./pages/agents/influencer_fitment_agent";
-import InventoryDisposalAgent from "./pages/agents/lead_distribution_agent";
+import InventoryDisposalAgent from "./pages/agents/inventory_disposal_agent";
 import LeadDistributionAgent from "./pages/agents/lead_distribution_agent";
 
 const queryClient = new QueryClient();
