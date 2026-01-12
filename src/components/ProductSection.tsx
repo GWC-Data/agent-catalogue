@@ -6,7 +6,7 @@ import retail_optimization from "@/assets/retail_optimization.png"
 import crm_engagement_optimization from "@/assets/crm_engagement_optimization.png"
 import influencer_fitment_agent from "@/assets/influencer_fitment.png"
 import inventory_disposal_agent from "@/assets/inventory_disposal_agent.png"
-
+import lead_distribution_agent from "@/assets/lead_distribution_agent.png"
 import { Link } from "react-router-dom";
 import path from "path";
 
@@ -20,6 +20,7 @@ const ProductSection = () => {
     { image: crm_engagement_optimization, category: "", name: "CRM Engagement Optimization", path: "/crm_engagament_optimization" },
     { image: influencer_fitment_agent, category: "", name: "Influencer Fitment Agent", path: "/influencer_fitment_agent" },
     { image: inventory_disposal_agent, category: "", name: "Inventory Disposal Agent", path: "/inventory_disposal_agent" },
+    { image: lead_distribution_agent, category: "", name: "Lead Distribution Agent", path: "/lead_distribution_agent" },
   ];
 
   const filteredProducts = products.filter(product => 

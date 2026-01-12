@@ -29,7 +29,6 @@ const InfluencerFitmentAgent = () => {
           setLoading(false);
         })
         .catch(() => setLoading(false));
-      
       }, []);
       
       

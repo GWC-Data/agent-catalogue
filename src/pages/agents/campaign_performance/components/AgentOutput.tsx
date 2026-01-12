@@ -28,8 +28,6 @@ const AgentOutput = () => {
             setTimeout(() => {
               setTopTen(data?.top_10);
               setBottomTen(data?.bottom_10);
-              const topCount = data?.top_10?.length ?? 0
-              const bottomCount = data?.bottom_10?.length ?? 0
               setLoading(false);
               toast({
                 title: "Success",
