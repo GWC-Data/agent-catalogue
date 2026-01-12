@@ -13,8 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2 } from 'lucide-react';
 import { TopTenOutput } from './TopTenOutput';
 import { BottomTenOutput } from './BottomTenOutput copy';
+import { useToast } from "@/components/ui/use-toast"
 
 const AgentOutput = () => {
+  const { toast } = useToast()
     const [loading, setLoading] = useState<boolean>(true);
     const [topTen, setTopTen] = useState<any>(null);
     const [bottomTen, setBottomTen] = useState<any>(null);
@@ -27,11 +29,21 @@ const AgentOutput = () => {
               setTopTen(data?.top_10);
               setBottomTen(data?.bottom_10);
               setLoading(false);
+              toast({
+                title: "Success",
+                description:"Agent data fetched successfully",
+                className: "bg-green-600 text-white border-green-700",
+              })
             }, 2000);
         })
         .catch((error) => {
             console.error("Error fetching output data:", error);
             setLoading(false);
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Something went wrong",
+            })
         });
     }
   return (

@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 import { ProductTableOutput } from './ProductTableOutput';
+import { useToast } from "@/components/ui/use-toast"
 
 const AgentOutput = () => {
 
@@ -27,9 +28,10 @@ const AgentOutput = () => {
     const [result, setResult] = useState<boolean>(false);
     const [message, setMessage] = useState("");
     const [approvalData, setApprovalData] = React.useState<any>(null);
-    const [agentOutput, setAgentOutput] = React.useState<any>(null);
+    const [productOutput, setProductOutput] = React.useState<any>(null);
     const approverRef = React.useRef<HTMLInputElement>(null);
     const commentsRef = React.useRef<HTMLInputElement>(null);
+    const { toast } = useToast()
     const [workFlowId, setWorkFlowId] = useState<number>(() => {
     const stored = localStorage.getItem("workFlowId");
       return stored ? Number(stored) : 0;
@@ -52,7 +54,7 @@ const AgentOutput = () => {
   };
 
   //Fetching POST method for Approval 
-    const handleOutput = () => {
+    const handleOutput = async () => {
         setLoading(true);
         setShowBudget(false)
         fetch("https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/start", {
@@ -79,7 +81,6 @@ const AgentOutput = () => {
             setTimeout(() => {
               setLoading(false);
             }, 2000);
-            console.log(data)
             setShowApproval(true)
         })
         .catch((error) => {
@@ -88,20 +89,29 @@ const AgentOutput = () => {
         });
     }
 
-    const handleAgentOutput = () => {
+    const handleAgentOutput = async () => {
       setLoading(true);
       setShowApproval(false)
       fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
       .then((response) => response.json())
-      .then((data) => {        
-            setAgentOutput(data?.current_state?.demand_forecast);
-            console.log(data?.current_state?.demand_forecast)
+      .then((data) => {    
+            setProductOutput(data?.current_state?.demand_forecast);
             setShowAgent(true)
             setLoading(false);
+            toast({
+              title: "Success",
+              description: "Agent data fetched successfully.",
+              className: "bg-green-600 text-white border-green-700",
+            })
       })
       .catch((error) => {
           console.error("Error fetching output data:", error);
           setLoading(false);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Something went wrong",
+          })
       });
   }
 
@@ -122,8 +132,7 @@ const AgentOutput = () => {
           }),
         })
       .then((response) => response.json())
-      .then((data) => {   
-        console.log(data)     
+      .then((data) => {     
         setMessage("Approved") 
             setLoading(false);
       })
@@ -139,8 +148,7 @@ const AgentOutput = () => {
     setResult(true);
       fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
       .then((response) => response.json())
-      .then((data) => {  
-        console.log(data)   
+      .then((data) => {   
         setMessage("Rejected")
             setLoading(false);
       })
@@ -323,7 +331,7 @@ const AgentOutput = () => {
     )}
 
     {/* STEP 4: Final Agent Response */}
-    {showAgent && !loading && !showWorkflowApprove && agentOutput && (
+    {showAgent && !loading && !showWorkflowApprove && productOutput && (
       <div>
      <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto" 
      onWheel={(e) => e.stopPropagation()}>
@@ -334,7 +342,7 @@ const AgentOutput = () => {
         </TabsList>
 
         <TabsContent value="product" className='pb-10'>
-          <ProductTableOutput data={agentOutput} 
+          <ProductTableOutput data={productOutput} 
           onShowApprove={() => setShowWorkflowApprove(true)}
           onReject={handleReject}/>
         </TabsContent>

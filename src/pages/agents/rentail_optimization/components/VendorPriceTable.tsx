@@ -129,7 +129,7 @@ const [sorting, setSorting] = React.useState<SortingState>([])
   return (
     <div className="w-full bg-white rounded-md px-6 py-3 shadow-sm border border-gray-200">
       <div className="flex items-center py-4">
-        <div className="text-lg font-bold">Product Table</div>
+        <div className="text-lg font-bold">VendorPrice Table</div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
