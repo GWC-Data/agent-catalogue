@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from '@/app/store';
 import { fetchManufacturingData } from '@/features/manufacturingThunks';
 import { HistoricalSalesTable } from './components/HistoricalSalesTable';
 import { VendorMasterTable } from './components/VendorMasterTable';
+import AgentOutput from './components/AgentOutput';
 
 const ManufacturingProcurementOptimization = () => {
 
@@ -47,7 +48,7 @@ const ManufacturingProcurementOptimization = () => {
               <TabsTrigger value="historicalSales" className='w-fit bg-white'>Historical Sales</TabsTrigger>
               <TabsTrigger value="vendorMaster" className='w-fit bg-white'>Vendor Master</TabsTrigger>
             </TabsList>
-            {/* <AgentOutput /> */}
+            <AgentOutput />
           </div>
            
           <TabsContent value="historicalSales" className='pb-10'>

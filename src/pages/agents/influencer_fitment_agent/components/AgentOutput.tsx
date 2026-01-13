@@ -24,7 +24,6 @@ const AgentOutput = () => {
 
   const { toast } = useToast()
     const [loading, setLoading] = useState<boolean>(false);
-    const [toastMessage, setToastMessage] = useState<string>("");
     const [aiScroing, setAiScroing] = useState<any>([]);
     const [fitmentScores, setFitmentScores] = useState<any>([]);
     const [campaigns, setCampaigns] = useState<any>([]);
@@ -48,7 +47,6 @@ const AgentOutput = () => {
         })
           .then((response) => response.json())
           .then((data) => {
-            setToastMessage(data?.message)
             handleWorkflowOutput(data?.message)
             setLoading(false);
         })
