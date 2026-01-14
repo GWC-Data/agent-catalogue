@@ -16,88 +16,59 @@ import { useToast } from "@/components/ui/use-toast"
 import { AgentOutputTable } from './AgentOutputTable';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
+import { approveManufacturingAgent, runManufacturingAgent } from '@/features/manufacturing_optimization/manufacturingAgentThunks';
 
 const AgentOutput = () => {
 
   const { toast } = useToast()
-    const [loading, setLoading] = useState<boolean>(false);
     const [showApproval, setShowApproval] = useState<boolean>(false);
-    const [agentData, setAgentData] = useState<any>([]);
-    const [threadId, setThreadId] = useState<string>("");
     const [approvalComment, setApprovalComment] = useState<string>("")
 
-  
-    // Generates random 4-digit number as string
-    const generateThreadId = (): string => {
-      return Math.floor(1000 + Math.random() * 9000).toString();
-  };
+    const dispatch = useDispatch<AppDispatch>()
 
-  const handleOutput = async () => {
-    setLoading(true);
-    setThreadId(generateThreadId())
-    fetch("https://manufacturingagent-462434048008.asia-south1.run.app/v1/agent/run", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-        thread_id: threadId
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data[0])
-        setAgentData(data[0].value.pending_negotiation)
-        setLoading(false)
-    })
-    .catch((error) => {
-        console.error("Error fetching output data:", error);
-        setLoading(false);
-    });
-}
-const handleApprovOutput = async () => {
-  setLoading(true);
-  fetch("https://manufacturingagent-462434048008.asia-south1.run.app/v1/agent/resume", {
-  method: "POST",
-  headers: {
-      "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-      thread_id: threadId,
-      approved: true,
-      comments: approvalComment
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data)
-      setLoading(false)
-      toast({
-        title: data?.status,
-        description: "Agent data Approved successfully.",
-        className: "bg-green-600 text-white border-green-700",
-      })
-  })
-  .catch((error) => {
-      console.error("Error fetching output data:", error);
-      setLoading(false);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong",
-      })
-  });
-}
-const handleCloseApproval = () => {
-  setApprovalComment("")
-  setShowApproval(false)
-} 
-
+    const { agentData, agentLoading, threadId, approvedAgentData } = useSelector(
+      (state: RootState) => state.manufacturing
+    )
+    
+    const handleRunAgent = async () => {
+      dispatch(runManufacturingAgent())   
+    }
+    
+    const handleApproveAgent = async () => {
+      if (!threadId) return
+      console.log(approvedAgentData)
+      try {
+        await dispatch(
+          approveManufacturingAgent({
+            threadId,
+            comments: approvalComment,
+          })
+        ).unwrap()
+    
+        toast({
+          title: "Approved",
+          description: "Agent data approved successfully.",
+          className: "bg-green-600 text-white border-green-700",
+        })
+    
+        setApprovalComment("")
+        setShowApproval(false)
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Approval Failed",
+          description: error || "Something went wrong",
+        })
+      }
+    }
+    
   return (
     <div>
       <Dialog>
         <DialogTrigger>
-          <Button onClick={handleOutput}>Agent</Button>
+          <Button onClick={handleRunAgent}>Agent</Button>
         </DialogTrigger>
         <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto">
           <DialogHeader>
@@ -129,9 +100,7 @@ const handleCloseApproval = () => {
 
         <Button
           onClick={() => {
-            handleApprovOutput()
-            setShowApproval(false) // close popup after save
-            handleCloseApproval()
+            handleApproveAgent()
           }}
         >
           Submit
@@ -140,7 +109,7 @@ const handleCloseApproval = () => {
     </div>
   </DialogContent>
 </Dialog>
-            {loading ? (
+            {agentLoading ? (
                   <div className="flex items-center justify-center h-96 w-full flex-col">
                     <Loader2 className="mb-2 h-5 w-5 animate-spin" />
                     <span className="text-sm">🤖 Agent is Loading...</span>

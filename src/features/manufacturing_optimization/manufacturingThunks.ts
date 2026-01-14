@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { fetchHistoricalSalesAPI, fetchVendorMasterAPI } from "../services/api"
+import { fetchHistoricalSalesAPI, fetchVendorMasterAPI } from "../../services/manufacturingApi"
 import { formatVendorMaster } from "./formatVendorMaster"
 
 export const fetchManufacturingData = createAsyncThunk(

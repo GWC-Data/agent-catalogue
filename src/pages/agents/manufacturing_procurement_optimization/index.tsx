@@ -1,10 +1,10 @@
 import { ArrowLeftIcon} from 'lucide-react';
 import { Link } from 'react-router-dom';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/app/store';
-import { fetchManufacturingData } from '@/features/manufacturingThunks';
+import { fetchManufacturingData } from '@/features/manufacturing_optimization/manufacturingThunks';
 import { HistoricalSalesTable } from './components/HistoricalSalesTable';
 import { VendorMasterTable } from './components/VendorMasterTable';
 import AgentOutput from './components/AgentOutput';
@@ -12,11 +12,10 @@ import AgentOutput from './components/AgentOutput';
 const ManufacturingProcurementOptimization = () => {
 
     const dispatch = useDispatch<AppDispatch>()
-    const { historicalSales, vendorMaster, loading, error, isFetched } = useSelector(
+    const { historicalSales, vendorMaster, initialLoading, initialError, isFetched } = useSelector(
         (state: RootState) => state.manufacturing
     ) 
-    console.log(vendorMaster)
-
+    
     useEffect(() => {
         if (!isFetched) {
             dispatch(fetchManufacturingData())
@@ -25,7 +24,7 @@ const ManufacturingProcurementOptimization = () => {
       
   return (
     <div className='h-full bg-white'>
-      {loading && (
+      {initialLoading && (
         <div className="absolute h-full w-full inset-0 z-10 bg-gray-200/50 flex items-center justify-center">
           <div className="loader"></div>
         </div>

@@ -29,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { VendorMasterRow } from "@/features/formatVendorMaster"
+import { VendorMasterRow } from "@/features/manufacturing_optimization/formatVendorMaster"
 
 
 export const columns: ColumnDef<VendorMasterRow>[] = [
