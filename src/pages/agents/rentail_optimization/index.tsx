@@ -4,34 +4,23 @@ import React, { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VendorPriceTable } from './components/VendorPriceTable';
 import { ProductTable } from './components/ProductTable';
-import { formatVendorPricing } from "./utils/formatVendorPricing";
-import type { VendorPriceRow } from "./utils/formatVendorPricing";
 import AgentOutput from './components/AgentOutput';
+import { AppDispatch, RootState } from '@/app/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRetailOptimizationInitialData } from '@/features/retail_optimization/retailOptimizationThunks';
 
 const RetailOptimization = () => {
 
-    const [vendorPrice, setVendorPrice] = useState<VendorPriceRow[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [product, setProduct] = useState<any>([]);
+  const dispatch = useDispatch<AppDispatch>()
+  const { vendorPrices, products, isFetched, loading } = useSelector(
+  (state: RootState) => state.retailOptimization
+)
 
-    useEffect(() => {
-        setLoading(true);
-      
-        Promise.all([
-          fetch("https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/input/products")
-            .then(res => res.json()),
-          fetch("https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/input/vendors-prices")
-            .then(res => res.json())
-        ])
-        .then(([productData, vendorData]) => {
-          setProduct(productData);
-          setVendorPrice(formatVendorPricing(vendorData.vendor_pricing));
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-      
-      }, []);
-      
+useEffect(() => {
+  if (!isFetched) {
+    dispatch(fetchRetailOptimizationInitialData())
+  }
+}, [dispatch, isFetched])
       
   return (
     <div className='h-full bg-white'>
@@ -62,10 +51,10 @@ const RetailOptimization = () => {
           </div>
            
           <TabsContent value="product" className='pb-10'>
-            <ProductTable data={product} />
+            <ProductTable data={products} />
           </TabsContent>
           <TabsContent value="vendorPrice" className='pb-10'>
-            <VendorPriceTable data={vendorPrice} />
+            <VendorPriceTable data={vendorPrices} />
           </TabsContent>
         </Tabs>
       </div>

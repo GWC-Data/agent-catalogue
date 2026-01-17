@@ -14,38 +14,35 @@ import { Loader2 } from 'lucide-react';
 import { TopTenOutput } from './TopTenOutput';
 import { BottomTenOutput } from './BottomTenOutput copy';
 import { useToast } from "@/components/ui/use-toast"
+import { fetchCampaignPerformanceAgentOutput } from '@/features/campaign_performance/campaignPerformanceAgentThunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
 
 const AgentOutput = () => {
   const { toast } = useToast()
-    const [loading, setLoading] = useState<boolean>(true);
-    const [topTen, setTopTen] = useState<any>(null);
-    const [bottomTen, setBottomTen] = useState<any>(null);
-    const handleOutput = () => {
-        setLoading(true);
-        fetch("https://campaign-performance-agent-462434048008.asia-south2.run.app/analyze-roas")
-        .then((response) => response.json())
-        .then((data) => {
-            setTimeout(() => {
-              setTopTen(data?.top_10);
-              setBottomTen(data?.bottom_10);
-              setLoading(false);
-              toast({
-                title: "Success",
-                description:"Agent data fetched successfully",
-                className: "bg-green-600 text-white border-green-700",
-              })
-            }, 2000);
-        })
-        .catch((error) => {
-            console.error("Error fetching output data:", error);
-            setLoading(false);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Something went wrong",
-            })
-        });
-    }
+  const dispatch = useDispatch<AppDispatch>()
+
+const { topTen, bottomTen, agentLoading } = useSelector(
+  (state: RootState) => state.campaignPerformance
+)
+
+const handleOutput = async () => {
+  try {
+    await dispatch(fetchCampaignPerformanceAgentOutput()).unwrap()
+
+    toast({
+      title: "Success",
+      description: "Agent data fetched successfully",
+      className: "bg-green-600 text-white border-green-700",
+    })
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: error || "Something went wrong",
+    })
+  }
+}
   return (
     <div>
       <Dialog>
@@ -58,7 +55,7 @@ const AgentOutput = () => {
             <DialogDescription></DialogDescription>
           </DialogHeader>
           <div>
-            {loading ? (
+            {agentLoading ? (
               <div className="flex items-center justify-center h-96 w-full flex-col">
                <Loader2 className="mb-2 h-5 w-5 animate-spin" />
                <span className="text-sm">🤖 Agent is Loading...</span>

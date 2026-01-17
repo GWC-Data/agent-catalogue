@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -14,44 +13,38 @@ import { CustomerTableOutput } from './CustomerTableOutput';
 import { ProductTableOutput } from './ProductTableOutput';
 import { Loader2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast"
+import { fetchReturnFraudAgentOutput } from '@/features/returns_fraud/returnFraudAgentThunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
 
 const AgentOutput = () => {
   const { toast } = useToast()
-    const [loading, setLoading] = useState<boolean>(true);
-    const [customers, setCustomers] = useState<any>(null);
-    const [products, setProducts] = useState<any>(null);
-    const handleOutput = () => {
-        setLoading(true);
-        fetch("https://abuse-return-detection-agent-462434048008.asia-south1.run.app/run", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setTimeout(() => {
-              setCustomers(data?.high_risk_customers);
-              setProducts(data?.high_risk_products);
-              setLoading(false);
-              toast({
-                title: "Success",
-                description: "Agent output generated successfully.",
-                className: "bg-green-600 text-white border-green-700",
-              })
-            }, 2000);
-            
-        })
-        .catch((error) => {
-            console.error("Error fetching output data:", error);
-            setLoading(false);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Something went wrong",
-            })
-        });
-    }
+
+  const dispatch = useDispatch<AppDispatch>()
+
+const { highRiskCustomers, highRiskProducts, agentLoading } = useSelector(
+  (state: RootState) => state.returnFraud
+)
+
+const handleOutput = async () => {
+  try {
+    console.log("hi")
+    await dispatch(fetchReturnFraudAgentOutput()).unwrap()
+
+    toast({
+      title: "Success",
+      description: "Agent output generated successfully.",
+      className: "bg-green-600 text-white border-green-700",
+    })
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: error || "Something went wrong",
+    })
+  }
+}
+    
   return (
     <div>
       <Dialog>
@@ -64,7 +57,7 @@ const AgentOutput = () => {
             <DialogDescription></DialogDescription>
           </DialogHeader>
           <div>
-            {loading ? (
+            {agentLoading ? (
               <div className="flex items-center justify-center h-96 w-full flex-col">
                <Loader2 className="mb-2 h-5 w-5 animate-spin" />
                <span className="text-sm">🤖 Agent is Loading...</span>
@@ -78,10 +71,10 @@ const AgentOutput = () => {
                   </TabsList>
                     
                   <TabsContent value="customer" className='pb-10'>
-                    <CustomerTableOutput data={customers} />
+                    <CustomerTableOutput data={highRiskCustomers} />
                   </TabsContent>
                   <TabsContent value="product" className='pb-10'>
-                    <ProductTableOutput data={products} />
+                    <ProductTableOutput data={highRiskProducts} />
                   </TabsContent>
                 </Tabs>
               </div>

@@ -4,27 +4,23 @@ import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AgentOutput from './components/AgentOutput';
 import { InventoryTable } from './components/InventoryTable';
+import { fetchInventoryDisposalInitialData } from '@/features/inventory_disposal/inventoryDisposalThunks';
+import { AppDispatch, RootState } from '@/app/store';
+import { useDispatch, useSelector } from 'react-redux';
 
 const InventoryDisposalAgent = () => {
-
-    const [loading, setLoading] = useState<boolean>(true);
-    const [inventoryData, setInventoryData] = useState<any>([]);
     
-        useEffect(() => {
-            setLoading(true);
-            fetch("https://inventorydisposal-462434048008.asia-south1.run.app/input/inventory_data")
-              .then((response) => response.json())
-              .then((data) => {
-                setInventoryData(data?.inventory_data)
-                console.log(data?.inventory_data);
-                
-                setLoading(false);
-              })
-              .catch((error) => {
-                console.log(error)
-                setLoading(false);
-          });
-          }, []);
+    const dispatch = useDispatch<AppDispatch>()
+    const { inventoryData, loading, isFetched } = useSelector(
+      (state: RootState) => state.inventoryDisposal
+    )
+    
+    useEffect(() => {
+      if (!isFetched) {
+        dispatch(fetchInventoryDisposalInitialData())
+      }
+    }, [dispatch, isFetched])
+
   return (
     <div className='h-full bg-white'>
       {loading && (

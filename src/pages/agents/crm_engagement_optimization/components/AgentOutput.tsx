@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -20,49 +19,36 @@ import BestSendWindowsOutput from './BestSendWindowsOutput';
 import StructuredMarketingInsightsOutput from './StructuredMarketingInsightsOutput';
 import AbTestWinnersOutput from './AbTestWinnersOutput';
 import { useToast } from "@/components/ui/use-toast"
+import { fetchCrmEngagementAgentOutput } from '@/features/crm_engagement/crmEngagementAgentThunks';
+import { AppDispatch, RootState } from '@/app/store';
+import { useDispatch, useSelector } from 'react-redux';
 
 const AgentOutput = () => {
 
   const { toast } = useToast()
-    const [loading, setLoading] = useState<boolean>(true);
-    const [actionsMessage, setActionsMessage] = useState<any>([])
-    const [recommendedChannel, setRecommendedChannel] = useState<any>(null)
-    const [bestSendWindows, setBestSendWindows] = useState<any>([])
-    const [structuredMarketingInsights, setStructuredMarketingInsights] = useState<any>([])
-    const [abTestWinners, setAbTestWinners ] = useState<any>([])
+  const dispatch = useDispatch<AppDispatch>()
 
-    const handleOutput = () => {
-        setLoading(true);
-        fetch("https://email-crm-engagement-optimization-agent-462434048008.asia-south1.run.app/agent", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setActionsMessage(data?.next_actions)
-            setRecommendedChannel(data?.recommended_channel)
-            setBestSendWindows(data?.best_send_windows)
-            setStructuredMarketingInsights(data?.structured_marketing_insights)
-            setAbTestWinners(data?.ab_test_winners)
-            setLoading(false);
-            toast({
-              title: "Success",
-              description:"Agent data fetched successfully",
-              className: "bg-green-600 text-white border-green-700",
-            })
-        })
-        .catch((error) => {
-            console.error("Error fetching output data:", error);
-            setLoading(false);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Something went wrong",
-            })
-        });
-    }
+const { actionsMessage, recommendedChannel, bestSendWindows, structuredMarketingInsights, abTestWinners, agentLoading } = useSelector(
+  (state: RootState) => state.crmEngagement
+)
+
+const handleOutput = async () => {
+  try {
+    await dispatch(fetchCrmEngagementAgentOutput()).unwrap()
+
+    toast({
+      title: "Success",
+      description: "Agent data fetched successfully",
+      className: "bg-green-600 text-white border-green-700",
+    })
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: error || "Something went wrong",
+    })
+  }
+}
   return (
     <Dialog>
         <DialogTrigger>
@@ -73,7 +59,7 @@ const AgentOutput = () => {
             <DialogTitle>Results</DialogTitle>
           </DialogHeader>
           <div>
-            {loading ? (
+            {agentLoading ? (
               <div className="flex items-center justify-center h-96 w-full flex-col">
                <Loader2 className="mb-2 h-5 w-5 animate-spin" />
                <span className="text-sm">🤖 Agent is Loading...</span>

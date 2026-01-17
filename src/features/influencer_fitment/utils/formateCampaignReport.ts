@@ -39,7 +39,7 @@ type CampaignReportInfluencerScore = {
     AudienceMatchScore: number
     RiskScore: number
     OverallScore: number
-    FitStatus: string
+    FitStatus: string 
   }
   
   // =======================

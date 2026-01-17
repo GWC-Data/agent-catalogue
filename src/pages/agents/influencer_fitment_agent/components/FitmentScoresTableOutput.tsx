@@ -27,7 +27,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { ChevronDown } from 'lucide-react';
-import { FitmentScoresRow } from '../utils/formatFitmentScores';
+import { FitmentScoresRow } from '../../../../features/influencer_fitment/utils/formatFitmentScores';
 
 
   export const columns: ColumnDef<FitmentScoresRow>[] = [

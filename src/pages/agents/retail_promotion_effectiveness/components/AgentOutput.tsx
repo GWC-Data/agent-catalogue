@@ -78,12 +78,12 @@ const AgentOutput = () => {
 {showDropdown && 
         <Accordion type="multiple" className="w-full mb-2">
   <AccordionItem value="summary" className="border-none">
-    <AccordionTrigger className="p-2 hover:no-underline border rounded-md">
+    <AccordionTrigger className="p-2 hover:no-underline border-2 rounded-md">
       <span>Promotion Summary</span>
     </AccordionTrigger>
 
     <AccordionContent className="pt-2">
-      <div className="p-4 border rounded-md">
+      <div className="p-4 border-2 rounded-md">
         <div className="space-y-4">
 
           {/* Total Promotions */}
@@ -99,12 +99,12 @@ const AgentOutput = () => {
           <div className="grid grid-cols-2 gap-4">
 
   {/* LEFT: Promotion Status */}
-  <div className="rounded-md border p-3 text-sm">
+  <div className="rounded-md border-2 p-3 text-sm">
     <div className="font-semibold mb-2">Promotion Status</div>
 
     <div className="flex gap-2">
       <span>Repeat</span>
-      <ArrowLeftIcon className="h-4 w-3 mt-0.5 rotate-180 text-gray-500" />
+      <ArrowLeftIcon className="h-4 w-3 mt-0.5 rotate-180" />
       <span className="font-medium">
         {agentOutput.summary.counts.repeat}
       </span>
@@ -112,7 +112,7 @@ const AgentOutput = () => {
 
     <div className="flex gap-2">
       <span>Monitor</span>
-      <ArrowLeftIcon className="h-4 w-3 mt-0.5 rotate-180 " />
+      <ArrowLeftIcon className="h-4 w-3 mt-0.5 rotate-180" />
       <span className="font-medium">
         {agentOutput.summary.counts.monitor}
       </span>
@@ -120,7 +120,7 @@ const AgentOutput = () => {
 
     <div className="flex gap-2">
       <span>Stop</span>
-      <ArrowLeftIcon className="h-4 w-3 mt-0.5 rotate-180 " />
+      <ArrowLeftIcon className="h-4 w-3 mt-0.5 rotate-180" />
       <span className="font-medium">
         {agentOutput.summary.counts.stop}
       </span>
@@ -130,7 +130,7 @@ const AgentOutput = () => {
   {/* RIGHT: Metrics stacked */}
   <div className="flex flex-col gap-3">
 
-    <div className="rounded-md border p-2 text-sm">
+    <div className="rounded-md border-2 p-2 text-sm">
       <div className="text-muted-foreground text-xs">
         Average ROI
       </div>
@@ -139,7 +139,7 @@ const AgentOutput = () => {
       </div>
     </div>
 
-    <div className="rounded-md border p-2 text-sm">
+    <div className="rounded-md border-2 p-2 text-sm">
       <div className="text-muted-foreground text-xs">
         Average Uplift
       </div>
@@ -152,13 +152,13 @@ const AgentOutput = () => {
 </div>
 
           {/* Revenue */}
-          <div className="rounded-md border p-3 text-sm">
+          <div className="rounded-md border-2 p-3 text-sm">
             <div className="font-semibold mb-1">Total Revenue</div>
             ₹{agentOutput.summary.total_revenue.toLocaleString()}
           </div>
 
           {/* Top Promotions */}
-          <div className="rounded-md border p-3 text-sm">
+          <div className="rounded-md border-2 p-3 text-sm">
             <div className="font-semibold mb-2">Top Promotions</div>
 
             <div className="space-y-2">

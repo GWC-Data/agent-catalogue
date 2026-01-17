@@ -27,7 +27,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { ChevronDown } from 'lucide-react';
-import { AiScoringRow } from '../utils/formatAiScoring';
+import { AiScoringRow } from '../../../../features/influencer_fitment/utils/formatAiScoring';
 
 
 

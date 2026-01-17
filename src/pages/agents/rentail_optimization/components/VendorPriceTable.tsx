@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { VendorPriceRow } from "../utils/formatVendorPricing"
+import { VendorPriceRow } from "../../../../features/retail_optimization/utils/formatVendorPricing"
 
 export const columns: ColumnDef<VendorPriceRow>[] = [
 
