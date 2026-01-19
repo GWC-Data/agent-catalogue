@@ -28,7 +28,6 @@ const { highRiskCustomers, highRiskProducts, agentLoading } = useSelector(
 
 const handleOutput = async () => {
   try {
-    console.log("hi")
     await dispatch(fetchReturnFraudAgentOutput()).unwrap()
 
     toast({

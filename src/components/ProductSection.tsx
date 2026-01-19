@@ -24,7 +24,7 @@ const ProductSection = () => {
     { image: influencer_fitment_agent, category: "", name: "Influencer Fitment Agent", path: "/influencer_fitment_agent" },
     { image: inventory_disposal_agent, category: "", name: "Inventory Disposal Agent", path: "/inventory_disposal_agent" },
     { image: lead_distribution_agent, category: "", name: "Lead Distribution Agent", path: "/lead_distribution_agent" },
-    { image: manufacturing_procurement_optimization, category: "", name: "Manufacturing ProcurementO ptimization", path: "/manufacturing_procurement_optimization"},
+    { image: manufacturing_procurement_optimization, category: "", name: "Manufacturing Procurement Optimization", path: "/manufacturing_procurement_optimization"},
     { image: retail_promotion_effectiveness, category: "", name: "Retail Promotion Effectiveness", path: "/retail_promotion_effectiveness"}
   ];
 
