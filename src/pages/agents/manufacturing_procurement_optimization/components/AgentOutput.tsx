@@ -38,7 +38,6 @@ const AgentOutput = () => {
     
     const handleApproveAgent = async () => {
       if (!threadId) return
-      console.log(approvedAgentData)
       try {
         await dispatch(
           approveManufacturingAgent({
