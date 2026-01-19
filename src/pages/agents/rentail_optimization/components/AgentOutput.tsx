@@ -15,11 +15,14 @@ import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 import { ProductTableOutput } from './ProductTableOutput';
 import { useToast } from "@/components/ui/use-toast"
+import { approveRetailOptimizationWorkflow, fetchRetailOptimizationAgentOutput, rejectRetailOptimizationWorkflow, startRetailOptimizationWorkflow } from '@/features/retail_optimization/retailOptimizationAgentThunks';
+import { AppDispatch, RootState } from '@/app/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { generateExecutor, generateThreadId } from '@/utils/generateThreadId';
 
 const AgentOutput = () => {
 
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState<boolean>(false);
     const [availableBudget, setAvailableBudget] = useState<string>("1");
     const [showBudget, setShowBudget] = useState<boolean>(true)
     const [showAgent, setShowAgent] = useState<boolean>(false)
@@ -27,136 +30,89 @@ const AgentOutput = () => {
     const [showWorkflowApprove, setShowWorkflowApprove] = useState<boolean>(false);
     const [result, setResult] = useState<boolean>(false);
     const [message, setMessage] = useState("");
-    const [approvalData, setApprovalData] = React.useState<any>(null);
-    const [productOutput, setProductOutput] = React.useState<any>(null);
     const approverRef = React.useRef<HTMLInputElement>(null);
     const commentsRef = React.useRef<HTMLInputElement>(null);
     const { toast } = useToast()
-    const [workFlowId, setWorkFlowId] = useState<number>(() => {
-    const stored = localStorage.getItem("workFlowId");
-      return stored ? Number(stored) : 0;
-    });
+    const { workflowId } = useSelector(
+      (state: RootState) => state.retailOptimization
+    )
   
 
-    // Generates random 5-letter lowercase string
-    const generateExecutor = (): string => {
-    const letters = "abcdefghijklmnopqrstuvwxyz";
-    let result = "";
-    for (let i = 0; i < 5; i++) {
-      result += letters.charAt(Math.floor(Math.random() * letters.length));
-    }
-      return result;
-  };
-
-    // Generates random 4-digit number as string
-    const generateThreadId = (): string => {
-      return Math.floor(1000 + Math.random() * 9000).toString();
-  };
-
   //Fetching POST method for Approval 
-    const handleOutput = async () => {
-        setLoading(true);
-        setShowBudget(false)
-        fetch("https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/start", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            available_budget: Number(availableBudget) || 1,
-            executor: generateExecutor(),
-            thread_id: generateThreadId()
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const rawWorkflowId = data.__interrupt__?.[0]?.value?.["Workflow ID"];
-            const parsedWorkflowId = Number(rawWorkflowId);
+  const dispatch = useDispatch<AppDispatch>()
 
-        if (!Number.isNaN(parsedWorkflowId)) {
-          setWorkFlowId(parsedWorkflowId);
-          localStorage.setItem("workFlowId", String(parsedWorkflowId));
-        }
-          setApprovalData(data.__interrupt__[0].value);
-            setTimeout(() => {
-              setLoading(false);
-            }, 2000);
-            setShowApproval(true)
-        })
-        .catch((error) => {
-            console.error("Error fetching output data:", error);
-            setLoading(false);
-        });
-    }
-
-    const handleAgentOutput = async () => {
-      setLoading(true);
-      setShowApproval(false)
-      fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
-      .then((response) => response.json())
-      .then((data) => {    
-            setProductOutput(data?.current_state?.demand_forecast);
-            setShowAgent(true)
-            setLoading(false);
-            toast({
-              title: "Success",
-              description: "Agent data fetched successfully.",
-              className: "bg-green-600 text-white border-green-700",
-            })
+  const handleOutput = async () => {
+    setShowBudget(false)
+  
+    await dispatch(
+      startRetailOptimizationWorkflow({
+        availableBudget: Number(availableBudget) || 1,
+        executor: generateExecutor(),
+        threadId: generateThreadId(),
       })
-      .catch((error) => {
-          console.error("Error fetching output data:", error);
-          setLoading(false);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Something went wrong",
-          })
-      });
+    ).unwrap()
+  
+    setShowApproval(true)
+  }
+
+  const { approvalData, productOutput, agentLoading } = useSelector(
+    (state: RootState) => state.retailOptimization
+  )
+  
+  const handleAgentOutput = async () => {
+    if (!workflowId) return
+    setShowApproval(false)
+
+    await dispatch(fetchRetailOptimizationAgentOutput(workflowId)).unwrap()
+
+    setShowAgent(true)
+  
+    toast({
+      title: "Success",
+      description: "Agent data fetched successfully.",
+      duration: 1000,
+      className: "bg-green-600 text-white border-green-700",
+    })
   }
 
   const handleApprove = async (approver: string, comments: string) => {
-    setLoading(true);
-    setShowWorkflowApprove(false)
-    setShowAgent(false)
-    setResult(true);
-      fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}/approve`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            action: "approve",
-            approver: approver,
-            comments: comments
-          }),
-        })
-      .then((response) => response.json())
-      .then((data) => {     
-        setMessage("Approved") 
-            setLoading(false);
-      })
-      .catch((error) => {
-          console.error("Error fetching output data:", error);
-          setLoading(false);
-      });
-  };
+  if (!workflowId) return
 
-  const handleReject = async () => {
-    setLoading(true);
-    setShowAgent(false)
-    setResult(true);
-      fetch(`https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workFlowId}`)
-      .then((response) => response.json())
-      .then((data) => {   
-        setMessage("Rejected")
-            setLoading(false);
-      })
-      .catch((error) => {
-          console.error("Error fetching output data:", error);
-          setLoading(false);
-      });
-  };
+  setShowWorkflowApprove(false)
+  setShowAgent(false)
+  setResult(true)
+
+  try {
+    await dispatch(
+      approveRetailOptimizationWorkflow({
+        workflowId,
+        approver,
+        comments,
+      })  
+      ).unwrap()
+
+    setMessage("Approved")
+  } catch (error) {
+    console.error("Error rejecting workflow:", error)
+  }
+}
+
+const handleReject = async () => {
+  if (!workflowId) return
+
+  setShowAgent(false)
+  setResult(true)
+
+  try {
+    await dispatch(
+      rejectRetailOptimizationWorkflow(workflowId)
+    ).unwrap()
+
+    setMessage("Rejected")
+  } catch (error) {
+    console.error("Error rejecting workflow:", error)
+  }
+}
   return (
     <Dialog
   open={open}
@@ -256,7 +212,7 @@ const AgentOutput = () => {
     {/* Workflow ID */}
     <div className="mt-3">
       <span className="py-1.5 rounded-md font-semibold text-gray-700 text-sm ">
-        Workflow ID: {workFlowId}
+        Workflow ID: {workflowId}
       </span>
     </div>
 
@@ -301,7 +257,7 @@ const AgentOutput = () => {
     )}
 
     {/* STEP 2: Loader */}
-    {loading && (
+    {agentLoading && (
       <div className="flex items-center justify-center h-64 w-full flex-col">
         <Loader2 className="mb-2 h-5 w-5 animate-spin" />
         <span className="text-sm">🤖 Agent is Loading...</span>
@@ -309,11 +265,11 @@ const AgentOutput = () => {
     )}
 
     {/* STEP 3: Approval response */}
-    {showApproval &&!showAgent && !showBudget && !loading && !showWorkflowApprove && approvalData && (
+    {showApproval &&!showAgent && !showBudget && !agentLoading && !showWorkflowApprove && approvalData && (
       <div className="space-y-3">
 
     <div className=" py-2 text-sm text-blue-800">
-      <strong>Workflow ID:</strong> <span className="font-medium">{workFlowId}</span>
+      <strong>Workflow ID:</strong> <span className="font-medium">{workflowId}</span>
     </div>
 
         <div className="text-sm font-medium text-gray-700">
@@ -331,7 +287,7 @@ const AgentOutput = () => {
     )}
 
     {/* STEP 4: Final Agent Response */}
-    {showAgent && !loading && !showWorkflowApprove && productOutput && (
+    {showAgent && !agentLoading && !showWorkflowApprove && productOutput && (
       <div>
      <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto" 
      onWheel={(e) => e.stopPropagation()}>

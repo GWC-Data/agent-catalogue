@@ -7,8 +7,11 @@ import crm_engagement_optimization from "@/assets/crm_engagement_optimization.pn
 import influencer_fitment_agent from "@/assets/influencer_fitment.png"
 import inventory_disposal_agent from "@/assets/inventory_disposal_agent.png"
 import lead_distribution_agent from "@/assets/lead_distribution_agent.png"
+import manufacturing_procurement_optimization from "@/assets/manufacturing_procurement_optimization.png"
+import retail_promotion_effectiveness from "@/assets/retail_promotion_effectiveness_agent.png"
+
 import { Link } from "react-router-dom";
-import path from "path";
+
 
 const ProductSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +24,8 @@ const ProductSection = () => {
     { image: influencer_fitment_agent, category: "", name: "Influencer Fitment Agent", path: "/influencer_fitment_agent" },
     { image: inventory_disposal_agent, category: "", name: "Inventory Disposal Agent", path: "/inventory_disposal_agent" },
     { image: lead_distribution_agent, category: "", name: "Lead Distribution Agent", path: "/lead_distribution_agent" },
+    { image: manufacturing_procurement_optimization, category: "", name: "Manufacturing ProcurementO ptimization", path: "/manufacturing_procurement_optimization"},
+    { image: retail_promotion_effectiveness, category: "", name: "Retail Promotion Effectiveness", path: "/retail_promotion_effectiveness"}
   ];
 
   const filteredProducts = products.filter(product => 

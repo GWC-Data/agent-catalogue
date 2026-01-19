@@ -14,67 +14,60 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast"
 import { LeadTableOutput } from './LeadTableOutput';
+import { resetLeadDistributionAgent, runLeadDistributionAgent } from '@/features/lead_distribution/leadDistributionAgentThunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
 
 const AgentOutput = () => {
   const { toast } = useToast()
-    const [loading, setLoading] = useState<boolean>(true);
-    const [leadsOutput, setLeadsOutput] = useState<any>(null);
-    const [message, setMessage] = useState<string>("")
     const [openChildDialog, setOpenChildDialog] = useState<boolean>(false);
 
-    const handleOutput = () => {
-      setOpenChildDialog(false)
-        setLoading(true);
-        fetch("https://lead-distribution-agent-462434048008.asia-south2.run.app/trigger", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setTimeout(() => {
-              console.log(data?.leads)
-              setLeadsOutput(data?.leads);
-              setLoading(false);
-              toast({
-                title: "Success",
-                description:"Agent data fetched successfully",
-                duration: 2000,
-                className: "bg-green-600 text-white border-green-700",
-              })
-            }, 2000);
-        })
-        .catch((error) => {
-            console.error("Error fetching output data: ", error);
-            setLoading(false);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              duration: 2000,
-              description: "Something went wrong",
-            })
-        });
-    }
-    const handleReset = async () => {
-      setLoading(true);
-      setOpenChildDialog(true)
-        fetch(`https://lead-distribution-agent-462434048008.asia-south2.run.app/reset`, {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          })
-        .then((response) => response.json())
-        .then((data) => {   
-          setMessage(data?.message)
-          setLoading(false);
-        })
-        .catch((error) => {
-            console.error("Error fetching output data:", error);
-            setLoading(false);
-        });
-      }
+    const dispatch = useDispatch<AppDispatch>()
+
+const { leadsOutput, agentLoading, resetMessage } = useSelector(
+  (state: RootState) => state.leadDistribution
+)
+
+const handleOutput = async () => {
+  try {
+    await dispatch(runLeadDistributionAgent()).unwrap()
+
+    toast({
+      title: "Success",
+      description: "Agent data fetched successfully",
+      duration: 2000,
+      className: "bg-green-600 text-white border-green-700",
+    })
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      duration: 2000,
+      description: error,
+    })
+  }
+}
+
+const handleReset = async () => {
+  try {
+    const result = await dispatch(resetLeadDistributionAgent()).unwrap()
+
+    toast({
+      title: "Reset Successful",
+      description: result.message,
+      duration: 2000,
+    })
+
+    // ✅ IMPORTANT: re-run agent after reset dialog close
+    await dispatch(runLeadDistributionAgent()).unwrap()
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      title: "Reset Failed",
+      description: error,
+    })
+  }
+}
   return (
     <div>
       <Dialog>
@@ -87,12 +80,12 @@ const AgentOutput = () => {
             <DialogDescription></DialogDescription>
           </DialogHeader>
 
-          {openChildDialog && (
+          {/* {openChildDialog && (
   <Dialog open={openChildDialog} onOpenChange={setOpenChildDialog}>
     <DialogContent className="max-w-sm">
       <DialogHeader>
         <DialogTitle className="text-[16px] font-semibold">
-          {message}
+          {resetMessage}
         </DialogTitle>
       </DialogHeader>
 
@@ -109,9 +102,10 @@ const AgentOutput = () => {
       </div>
     </DialogContent>
   </Dialog>
-)}
+)} */}
+
           <div>
-            {loading ? (
+            {agentLoading ? (
               <div className="flex items-center justify-center h-96 w-full flex-col">
                <Loader2 className="mb-2 h-5 w-5 animate-spin" />
                <span className="text-sm">🤖 Agent is Loading...</span>

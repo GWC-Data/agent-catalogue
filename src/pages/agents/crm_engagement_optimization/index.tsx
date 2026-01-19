@@ -4,26 +4,22 @@ import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CampaignTable } from './components/CampaignTable';
 import AgentOutput from './components/AgentOutput';
+import { fetchCrmEngagementInitialData } from '@/features/crm_engagement/crmEngagementThunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
 
 const CrmEngagementOptimization = () => {
 
-    const [loading, setLoading] = useState<boolean>(true);
-    const [campaigns, setCampaigns] = useState<any>([]);
+  const dispatch = useDispatch<AppDispatch>()
+  const { campaigns, loading, isFetched } = useSelector(
+  (state: RootState) => state.crmEngagement
+)
 
-    useEffect(() => {
-        setLoading(true);
-        fetch("https://email-crm-engagement-optimization-agent-462434048008.asia-south1.run.app/data/campaign")
-          .then((response) => response.json())
-          .then((data) => {
-            setCampaigns(data?.campaign_data)
-            // console.log(data?.campaign_data)
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.log(error)
-            setLoading(false);
-      });
-      }, []);
+useEffect(() => {
+  if (!isFetched) {
+    dispatch(fetchCrmEngagementInitialData())
+  }
+}, [dispatch, isFetched])
 
 
   return (

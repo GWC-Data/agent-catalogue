@@ -6,25 +6,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from 'react';
 import { CampaignTable } from './components/CampaignTable';
 import AgentOutput from './components/AgentOutput';
+import { fetchCampaignPerformanceInitialData } from '@/features/campaign_performance/campaignPerformanceThunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
 
 const CampaignPerformance = () => {
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [campaign, setCampaign] = useState<any>([]);
+  const dispatch = useDispatch<AppDispatch>()
+  const { campaigns, loading, isFetched } = useSelector(
+  (state: RootState) => state.campaignPerformance
+)
 
-  useEffect(() => {
-    setLoading(true);
-    fetch("https://campaign-performance-agent-462434048008.asia-south2.run.app/input/campaigns")
-      .then((response) => response.json())
-      .then((data) => {
-        setCampaign(data?.campaigns_data)
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error)
-        setLoading(false);
-  });
-  }, []);
+useEffect(() => {
+  if (!isFetched) {
+    dispatch(fetchCampaignPerformanceInitialData())
+  }
+}, [dispatch, isFetched])
 
   return (
     <div className='h-full bg-white'>
@@ -54,7 +51,7 @@ const CampaignPerformance = () => {
           </div>
            
           <TabsContent value="campaign" className='pb-10'>
-            <CampaignTable data={campaign} />
+            <CampaignTable data={campaigns} />
           </TabsContent>
         </Tabs>
       </div>

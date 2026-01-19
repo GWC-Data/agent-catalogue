@@ -8,49 +8,21 @@ import { ProductTable } from './components/ProductTable';
 import { CustomerTable } from './components/CustomerTable';
 import { PolicyTable } from './components/PolicyTable';
 import AgentOutput from './components/AgentOutput';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
+import { fetchReturnFraudInitialData } from '@/features/returns_fraud/returnsFraudThunks';
 
 const ReturnsFraudPrevention = () => {
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [customer, setCustomer] = useState<any>([]);
-  const [product, setProduct] = useState<any>([]);
-  const [policies, setPolicies] = useState<any>([]);
-
+  const dispatch = useDispatch<AppDispatch>()
+  const { customers, products, policies, loading ,isFetched } = useSelector((state: RootState) => state.returnFraud)
+ 
   useEffect(() => {
-    setLoading(true);
-    fetch("https://abuse-return-detection-agent-462434048008.asia-south1.run.app/input/customer_data")
-      .then((response) => response.json())
-      .then((data) => {
-        setCustomer(data?.customer_data?.customers)
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error)
-        setLoading(false);
-  });
+    if (!isFetched) {
+      dispatch(fetchReturnFraudInitialData())
+    }
+  }, [dispatch, isFetched])
 
-    fetch("https://abuse-return-detection-agent-462434048008.asia-south1.run.app/input/product_data")
-      .then((response) => response.json())
-      .then((data) => { 
-        setProduct(data?.product_data?.products)
-        setLoading(false);
-    })
-    .catch((error) => {
-      console.log(error)
-      setLoading(false);
-    });
-
-    fetch("https://abuse-return-detection-agent-462434048008.asia-south1.run.app/policies")
-      .then((response) => response.json())
-      .then((data) => { 
-        setPolicies(data?.policies?.policies)
-        setLoading(false);
-      })
-      .catch((error) => { 
-        console.log(error)
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <div className='h-full bg-white'>
@@ -82,10 +54,10 @@ const ReturnsFraudPrevention = () => {
           </div>
            
           <TabsContent value="customer" className='pb-10'>
-            <CustomerTable data={customer} />
+            <CustomerTable data={customers} />
           </TabsContent>
           <TabsContent value="product" className='pb-10'>
-            <ProductTable data={product} />
+            <ProductTable data={products} />
           </TabsContent>
           <TabsContent value="policies" className='pb-10'>
             <PolicyTable data={policies} />

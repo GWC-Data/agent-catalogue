@@ -27,7 +27,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { ChevronDown } from 'lucide-react';
-import { CampaignReportRow } from '../utils/formateCampaignReport';
+import { CampaignReportRow } from '../../../../features/influencer_fitment/utils/formateCampaignReport';
 
 
 

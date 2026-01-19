@@ -5,39 +5,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LeadTable } from './components/LeadTable';
 import { RepsTable } from './components/RepsTable';
 import AgentOutput from './components/AgentOutput';
+import { fetchLeadDistributionInitialData } from '@/features/lead_distribution/leadDistributionThunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
 
 
 const LeadDistributionAgent = () => {
   
-    const [loading, setLoading] = useState<boolean>(true);
-    const [leads, setLeads] = useState<any>([]);
-    const [reps, setReps] = useState<any>([]);
-  
-    useEffect(() => {
-      setLoading(true);
-      fetch("https://lead-distribution-agent-462434048008.asia-south2.run.app/leads")
-        .then((response) => response.json())
-        .then((data) => {
-          setLeads(data)
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log(error)
-          setLoading(false);
-    });
-  
-      fetch("https://lead-distribution-agent-462434048008.asia-south2.run.app/reps")
-        .then((response) => response.json())
-        .then((data) => { 
-          setReps(data)
-          setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error)
-        setLoading(false);
-      });
-  
-    }, []);
+  const dispatch = useDispatch<AppDispatch>()
+  const { leads, reps, loading, isFetched } = useSelector(
+  (state: RootState) => state.leadDistribution
+)
+
+useEffect(() => {
+  if (!isFetched) {
+    dispatch(fetchLeadDistributionInitialData())
+  }
+}, [dispatch, isFetched])
   
     return (
       <div className='h-full bg-white'>

@@ -5,33 +5,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InfluencersTable } from './components/InfluencersTable'
 import { CampaignsTable } from './components/CampaignsTable';
 import AgentOutput from './components/AgentOutput';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/store';
+import { fetchInfluencerFitmentInitialData } from '@/features/influencer_fitment/influencerFitmentThunks';
 
 const InfluencerFitmentAgent = () => {
 
-    const [loading, setLoading] = useState<boolean>(true);
-    const [campaigns, setCampaigns] = useState<any>([]);
-    const [influencers, setInfluencers] = useState<any>([]);
+  const dispatch = useDispatch<AppDispatch>()
+  const { campaigns, influencers, loading, isFetched } = useSelector(
+  (state: RootState) => state.influencerFitment
+)
 
-    useEffect(() => {
-        setLoading(true);
+useEffect(() => {
+  if (!isFetched) {
+    dispatch(fetchInfluencerFitmentInitialData())
+  }
+}, [dispatch, isFetched])
       
-        Promise.all([
-          fetch("https://influencerfitmentagent-462434048008.asia-south1.run.app/input/influencers")
-            .then(res => res.json()),
-          fetch("https://influencerfitmentagent-462434048008.asia-south1.run.app/input/campaigns")
-            .then(res => res.json())
-        ])
-        .then(([influencersData, campaignsData]) => {
-          console.log(campaignsData?.data);
-          console.log(influencersData?.data)
-          setCampaigns(campaignsData?.data);
-          setInfluencers(influencersData?.data);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-      }, []);
-      
-      
+
   return (
     <div className='h-full bg-white'>
       {loading && (
