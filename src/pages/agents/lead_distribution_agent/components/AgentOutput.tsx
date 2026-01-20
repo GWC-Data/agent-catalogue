@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -20,11 +17,9 @@ import { AppDispatch, RootState } from '@/app/store';
 
 const AgentOutput = () => {
   const { toast } = useToast()
-    const [openChildDialog, setOpenChildDialog] = useState<boolean>(false);
-
     const dispatch = useDispatch<AppDispatch>()
 
-const { leadsOutput, agentLoading, resetMessage } = useSelector(
+const { leadsOutput, agentLoading } = useSelector(
   (state: RootState) => state.leadDistribution
 )
 
@@ -51,7 +46,6 @@ const handleOutput = async () => {
 const handleReset = async () => {
   try {
     const result = await dispatch(resetLeadDistributionAgent()).unwrap()
-
     toast({
       title: "Reset Successful",
       description: result.message,
@@ -71,7 +65,7 @@ const handleReset = async () => {
   return (
     <div>
       <Dialog>
-        <DialogTrigger>
+        <DialogTrigger asChild>
           <Button onClick={handleOutput}>Agent</Button>
         </DialogTrigger>
         <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto">

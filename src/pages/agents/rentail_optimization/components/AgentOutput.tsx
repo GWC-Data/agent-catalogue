@@ -23,7 +23,7 @@ import { generateExecutor, generateThreadId } from '@/utils/generateThreadId';
 const AgentOutput = () => {
 
     const [open, setOpen] = useState(false);
-    const [availableBudget, setAvailableBudget] = useState<string>("1");
+    const [availableBudget, setAvailableBudget] = useState<string>("");
     const [showBudget, setShowBudget] = useState<boolean>(true)
     const [showAgent, setShowAgent] = useState<boolean>(false)
     const [showApproval, setShowApproval] = useState<boolean>(false);
@@ -36,14 +36,22 @@ const AgentOutput = () => {
     const { workflowId } = useSelector(
       (state: RootState) => state.retailOptimization
     )
-  
+    const isApprovalValid = availableBudget.trim().length > 0;
+    const [isFormValid, setIsFormValid] = React.useState(false);
 
+    const validateForm = () => {
+      const approver = approverRef.current?.value.trim() || "";
+      const comments = commentsRef.current?.value.trim() || "";
+    
+      setIsFormValid(Boolean(approver && comments));
+    };
+  
   //Fetching POST method for Approval 
   const dispatch = useDispatch<AppDispatch>()
 
   const handleOutput = async () => {
     setShowBudget(false)
-  
+    setIsFormValid(false)
     await dispatch(
       startRetailOptimizationWorkflow({
         availableBudget: Number(availableBudget) || 1,
@@ -130,7 +138,7 @@ const handleReject = async () => {
   }}
 >
   {/* Agent Button */}
-  <DialogTrigger>
+  <DialogTrigger asChild>
     <Button>Agent</Button>
   </DialogTrigger>
 
@@ -154,10 +162,12 @@ const handleReject = async () => {
       <div className="grid gap-1.5">
       <Label htmlFor="approver">Approver</Label>
     <Input
+    required
       id="approver"
       ref={approverRef}
       placeholder="Enter approver name"
       className='bg-white'
+      onChange={validateForm}
     />
   </div>
 
@@ -168,6 +178,7 @@ const handleReject = async () => {
       ref={commentsRef}
       placeholder="Enter comments"
       className='bg-white'
+      onChange={validateForm}
     />
       </div>
     </div>
@@ -181,6 +192,7 @@ const handleReject = async () => {
       </Button>
 
       <Button
+      disabled={!isFormValid}
         onClick={() => {
         const approver = approverRef.current?.value || "";
         const comments = commentsRef.current?.value || "";
@@ -236,7 +248,7 @@ const handleReject = async () => {
           id="budget"
           name="budget-1"
           value={availableBudget}
-          className='bg-white'
+          className={!isApprovalValid && availableBudget ? "border-red-500" : "bg-white"}
           onChange={(e) => {
             const value = e.target.value;
               if (/^\d*$/.test(value)) {
@@ -249,7 +261,7 @@ const handleReject = async () => {
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={handleOutput}>
+          <Button disabled={!isApprovalValid} onClick={handleOutput}>
             Save changes
           </Button>
         </DialogFooter>

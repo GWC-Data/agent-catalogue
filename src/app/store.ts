@@ -9,6 +9,7 @@ import inventoryDisposalReducer from "../features/inventory_disposal/inventoryDi
 import leadDistributionReducer from "../features/lead_distribution/leadDistributionSlice"
 import retailOptimizationReducer from "../features/retail_optimization/retailOptimizationSlice"
 import menuPlanningReducer from "../features/menu_planning/menuPlanningSlice"
+import itResolverReducer from "../features/it_resolver/itResolverSlice"
 
 
 export const store = configureStore({
@@ -22,7 +23,8 @@ export const store = configureStore({
     inventoryDisposal: inventoryDisposalReducer,
     leadDistribution: leadDistributionReducer,
     retailOptimization: retailOptimizationReducer,
-    menuPlanning: menuPlanningReducer
+    menuPlanning: menuPlanningReducer,
+    itResolver: itResolverReducer
   }
 })
 export type RootState = ReturnType<typeof store.getState>

@@ -19,7 +19,6 @@ import { approveMenuPlanningAgent, runMenuPlanningAgent } from '@/features/menu_
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { SalesTable } from './SalesTable';
-import { VendorTable } from './VendorTable';
 import { RecipesCard } from './RecipesCard';
 import { InventoryTableOutput } from './InventoryTableOutput';
 import { VendorTableOutput } from './VendorTableOutput';
@@ -29,6 +28,7 @@ const AgentOutput = () => {
   const [showApproval, setShowApproval] = useState<boolean>(false);
   const [showAgentOutput, setShowAgentOutput] = useState<boolean>(false);
   const [approvalMessage, setApprovalMessage] = useState<string>("")
+  const isApprovalValid = approvalMessage.trim().length > 0;
   
   const { toast } = useToast()
   const dispatch = useDispatch<AppDispatch>()
@@ -73,7 +73,6 @@ const handleAgentOutput = async (message: string) => {
   }
   setApprovalMessage("")
 }
-console.log(agentVendorOrders)
   return (
     <div>
       {agentLoading &&
@@ -85,7 +84,7 @@ console.log(agentVendorOrders)
       {/* Mini pop-up */}
   <Dialog open={showApproval} onOpenChange={setShowApproval}>
    
-    <DialogTrigger>
+    <DialogTrigger asChild>
         <Button onClick={handleApproveAgent}>Agent</Button>
       </DialogTrigger>
 
@@ -135,14 +134,16 @@ console.log(agentVendorOrders)
       <div className="grid gap-3">
         <Label>Enter The Approval Comments </Label>
         <Input
-        className='bg-white'
+        
           id="approv"
           name="approv-1"
           value={approvalMessage}
           onChange={(e) => setApprovalMessage(e.target.value)}
+          className={!isApprovalValid && approvalMessage ? "border-red-500" : "bg-white"}
         />
         <DialogFooter className="mt-3">
           <Button
+          disabled={!isApprovalValid}
             onClick={() => {
               handleAgentOutput(approvalMessage)
             }}
