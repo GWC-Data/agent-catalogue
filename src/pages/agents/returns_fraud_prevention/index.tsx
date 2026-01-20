@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArrowLeftIcon } from 'lucide-react';
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from 'react';
 import { ProductTable } from './components/ProductTable';
 import { CustomerTable } from './components/CustomerTable';
 import { PolicyTable } from './components/PolicyTable';

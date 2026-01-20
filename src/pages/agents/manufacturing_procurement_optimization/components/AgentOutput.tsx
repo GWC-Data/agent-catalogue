@@ -15,7 +15,6 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast"
 import { AgentOutputTable } from './AgentOutputTable';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/app/store';
 import { approveManufacturingAgent, runManufacturingAgent } from '@/features/manufacturing_optimization/manufacturingAgentThunks';
@@ -25,8 +24,9 @@ const AgentOutput = () => {
   const { toast } = useToast()
     const [showApproval, setShowApproval] = useState<boolean>(false);
     const [approvalComment, setApprovalComment] = useState<string>("")
-
     const dispatch = useDispatch<AppDispatch>()
+
+    const isApprovalValid = approvalComment.trim().length > 0;
 
     const { agentData, agentLoading, threadId, approvedAgentData } = useSelector(
       (state: RootState) => state.manufacturing
@@ -66,7 +66,7 @@ const AgentOutput = () => {
   return (
     <div>
       <Dialog>
-        <DialogTrigger>
+        <DialogTrigger asChild>
           <Button onClick={handleRunAgent}>Agent</Button>
         </DialogTrigger>
         <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-full h-[90vh] flex flex-col bg-white overflow-auto">
@@ -87,23 +87,25 @@ const AgentOutput = () => {
     </DialogHeader>
 
     <div className="grid gap-3">
-      <Label htmlFor="approv"></Label>
 
-      <Input
+    <Input
   id="approv"
   name="approv-1"
   value={approvalComment}
   onChange={(e) => setApprovalComment(e.target.value)}
+  className={!isApprovalValid && approvalComment ? "border-red-500" : ""}
 />
+
       <DialogFooter className="mt-3">
 
-        <Button
-          onClick={() => {
-            handleApproveAgent()
-          }}
-        >
-          Submit
-        </Button>
+      <Button
+  disabled={!isApprovalValid}
+  onClick={() => {
+    handleApproveAgent()
+  }}
+>
+  Submit
+</Button>
       </DialogFooter>
     </div>
   </DialogContent>

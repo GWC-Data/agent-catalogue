@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArrowLeftIcon } from 'lucide-react';
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from 'react';
 import { CampaignTable } from './components/CampaignTable';
 import AgentOutput from './components/AgentOutput';
 import { fetchCampaignPerformanceInitialData } from '@/features/campaign_performance/campaignPerformanceThunks';

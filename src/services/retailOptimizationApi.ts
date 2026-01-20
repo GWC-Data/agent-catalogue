@@ -41,7 +41,6 @@ export const fetchProductsAPI = async () => {
     const res = await fetch(
       `https://aai-case-study-retail-optimization-462434048008.asia-south2.run.app/api/v1/workflows/${workflowId}`
     )
-  
     if (!res.ok) throw new Error("Failed to fetch workflow state")
     return res.json()
   }

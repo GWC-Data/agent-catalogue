@@ -9,6 +9,8 @@ import inventory_disposal_agent from "@/assets/inventory_disposal_agent.png"
 import lead_distribution_agent from "@/assets/lead_distribution_agent.png"
 import manufacturing_procurement_optimization from "@/assets/manufacturing_procurement_optimization.png"
 import retail_promotion_effectiveness from "@/assets/retail_promotion_effectiveness_agent.png"
+import menu_planning_agent from "@/assets/menu-planning-agent.png"
+import it_reslover from "@/assets/it_resolver.png"
 
 import { Link } from "react-router-dom";
 
@@ -25,7 +27,9 @@ const ProductSection = () => {
     { image: inventory_disposal_agent, category: "", name: "Inventory Disposal Agent", path: "/inventory_disposal_agent" },
     { image: lead_distribution_agent, category: "", name: "Lead Distribution Agent", path: "/lead_distribution_agent" },
     { image: manufacturing_procurement_optimization, category: "", name: "Manufacturing Procurement Optimization", path: "/manufacturing_procurement_optimization"},
-    { image: retail_promotion_effectiveness, category: "", name: "Retail Promotion Effectiveness", path: "/retail_promotion_effectiveness"}
+    { image: retail_promotion_effectiveness, category: "", name: "Retail Promotion Effectiveness", path: "/retail_promotion_effectiveness"},
+    { image: menu_planning_agent, category: "", name: "Menu Planning Agent", path: "/menu_planning_agent"},
+    { image: it_reslover, category: "", name: "IT Resolver", path: "/it_resolver"}
   ];
 
   const filteredProducts = products.filter(product => 

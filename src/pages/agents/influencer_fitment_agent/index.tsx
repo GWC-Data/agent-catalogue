@@ -1,6 +1,6 @@
 import { ArrowLeftIcon} from 'lucide-react';
 import { Link } from 'react-router-dom';
-import React, { useEffect, useState } from 'react'
+import { useEffect} from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InfluencersTable } from './components/InfluencersTable'
 import { CampaignsTable } from './components/CampaignsTable';
