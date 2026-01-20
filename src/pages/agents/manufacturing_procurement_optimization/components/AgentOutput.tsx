@@ -87,7 +87,6 @@ const AgentOutput = () => {
     </DialogHeader>
 
     <div className="grid gap-3">
-      <Label htmlFor="approv"></Label>
 
       <Input
   id="approv"

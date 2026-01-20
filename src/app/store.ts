@@ -8,6 +8,7 @@ import influencerFitmentReducer from "../features/influencer_fitment/influencerF
 import inventoryDisposalReducer from "../features/inventory_disposal/inventoryDisposalSlice"
 import leadDistributionReducer from "../features/lead_distribution/leadDistributionSlice"
 import retailOptimizationReducer from "../features/retail_optimization/retailOptimizationSlice"
+import menuPlanningReducer from "../features/menu_planning/menuPlanningSlice"
 
 
 export const store = configureStore({
@@ -20,7 +21,8 @@ export const store = configureStore({
     influencerFitment: influencerFitmentReducer,
     inventoryDisposal: inventoryDisposalReducer,
     leadDistribution: leadDistributionReducer,
-    retailOptimization: retailOptimizationReducer
+    retailOptimization: retailOptimizationReducer,
+    menuPlanning: menuPlanningReducer
   }
 })
 export type RootState = ReturnType<typeof store.getState>
